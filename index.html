@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#1c1916"/>
+<title>Familión 0.4 Casa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #161311;
+  --bg2: #1e1a16;
+  --card: #241f1a;
+  --ink: #f3ece3;
+  --muted: #b7a99a;
+  --line: #3a322b;
+  --gold: #d4a054;
+  --gold2: #f0c27a;
+  --cream: #efe4d4;
+  --ok: #7dba7a;
+  --warn: #e0a45a;
+  --bad: #d46a5c;
+  --BZ: #FF3B4A; --BG: #FFC107; --G: #22C55E; --D: #22D3EE; --S: #6366F1; --E: #E879F9;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+  font-family: Outfit, system-ui, sans-serif; min-height: 100%; }
+body { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+h1,h2,h3,.serif { font-family: Fraunces, Georgia, serif; }
+button, select, input { font-family: inherit; }
+.app-header {
+  position: sticky; top: 0; z-index: 20;
+  background: linear-gradient(180deg, #161311 70%, rgba(22,19,17,0));
+  padding: calc(12px + env(safe-area-inset-top)) 18px 18px;
+}
+.brand { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.brand h1 { margin: 0; font-size: 28px; letter-spacing: -0.03em; font-weight: 700; }
+.brand h1 span { color: var(--gold); }
+.brand .sub { color: var(--muted); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; }
+.pills { display: flex; gap: 8px; overflow-x: auto; padding: 12px 18px 4px; scrollbar-width: none; }
+.pills::-webkit-scrollbar { display: none; }
+.pill { border: 1px solid var(--line); background: var(--card); color: var(--muted);
+  border-radius: 999px; padding: 7px 12px; font-size: 13px; white-space: nowrap; }
+.pill.on { background: var(--cream); color: #1c1916; border-color: var(--cream); font-weight: 600; }
+.wrap { padding: 8px 16px 24px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px; margin-bottom: 12px; }
+.card h2 { margin: 0 0 10px; font-size: 20px; }
+.muted { color: var(--muted); font-size: 13px; line-height: 1.45; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--cream); }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.block {
+  display: grid; grid-template-columns: 92px 1fr auto; gap: 10px; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--line);
+}
+.block:last-child { border-bottom: 0; }
+.when { font-size: 12px; color: var(--muted); line-height: 1.35; }
+.who { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.tag { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold2);
+  border: 1px solid #5a4630; background: #2b241c; padding: 2px 6px; border-radius: 6px; }
+.days { font-variant-numeric: tabular-nums; font-size: 12px; color: var(--muted); }
+.month-lab { margin: 18px 0 4px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+.nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  background: #120f0d; border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: repeat(5,1fr);
+  padding: 8px 6px calc(10px + env(safe-area-inset-bottom)); }
+.nav button { background: none; border: 0; color: var(--muted); font-size: 11px; padding: 6px 0; }
+.nav button.on { color: var(--gold2); }
+.nav svg { display: block; margin: 0 auto 3px; }
+.hidden { display: none !important; }
+label.field { display: block; margin: 10px 0 6px; font-size: 12px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+input[type=text], input[type=number], input[type=date], select, textarea {
+  width: 100%; background: #1a1613; color: var(--ink); border: 1px solid var(--line);
+  border-radius: 12px; padding: 10px 12px; font-size: 15px;
+}
+textarea { min-height: 90px; resize: vertical; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--gold); color: #1c1408; border: 0; border-radius: 12px;
+  padding: 12px 16px; font-weight: 600; font-size: 14px; width: 100%; margin-top: 8px;
+}
+.btn.ghost { background: transparent; color: var(--cream); border: 1px solid var(--line); }
+.btn.small { width: auto; padding: 8px 12px; font-size: 13px; margin: 0; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kpi { background: #1a1613; border-radius: 12px; padding: 12px; text-align: center; }
+.kpi b { display: block; font-size: 22px; font-family: Fraunces, serif; }
+.kpi span { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.peak-grid { display: grid; grid-template-columns: 88px 1fr 1fr; gap: 6px; font-size: 12px; align-items: center; }
+.peak-grid .h { color: var(--muted); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+.fam { font-weight: 600; }
+.swap-item { padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.banner { background: #2b241c; border: 1px solid #5a4630; color: var(--gold2);
+  border-radius: 12px; padding: 10px 12px; font-size: 13px; margin-bottom: 12px; }
+.warnbox { background: #2a1c16; border: 1px solid #6a3b2e; color: #f0b7a8;
+  border-radius: 12px; padding: 10px 12px; font-size: 13px; margin: 8px 0; }
+.okbox { background: #162216; border: 1px solid #2e5a32; color: #b7e0b4;
+  border-radius: 12px; padding: 10px 12px; font-size: 13px; margin: 8px 0; }
+table.fair { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.fair th, table.fair td { text-align: left; padding: 7px 4px; border-bottom: 1px solid var(--line); }
+table.fair td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 50;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.sheet { background: var(--bg2); width: 100%; max-width: 560px; border-radius: 22px 22px 0 0;
+  padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); max-height: 88vh; overflow: auto; }
+.handle { width: 42px; height: 4px; background: #4a4038; border-radius: 4px; margin: 0 auto 12px; }
+.today-mark { outline: 1px dashed var(--gold); outline-offset: 3px; border-radius: 8px; }
+.cal-bar { display:flex; align-items:center; justify-content:space-between; gap:8px; margin: 4px 0 12px; }
+.cal-bar h3 { margin:0; font-size:18px; flex:1; text-align:center; }
+.iconbtn { width:40px; height:40px; border-radius:12px; border:1px solid var(--line);
+  background:var(--card); color:var(--cream); font-size:18px; }
+.wdays, .month-grid { display:grid; grid-template-columns: repeat(7, 1fr); gap:3px; }
+.wdays span { text-align:center; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:4px 0; }
+.mday {
+  min-height:58px; border-radius:10px; background:#1a1613; border:1px solid var(--line);
+  padding:5px 4px 4px; display:flex; flex-direction:column; gap:3px;
+}
+.mday.tall { min-height:102px; }
+.mday.out { opacity:.38; }
+.mday.today { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.mday .n { font-size:11px; color:var(--muted); font-variant-numeric: tabular-nums; }
+.mday.today .n { color:var(--gold2); font-weight:600; }
+.stripes { display:flex; flex-direction:column; gap:2px; flex:1; }
+.stripes i { display:flex; align-items:center; justify-content:center; height:8px; border-radius:3px; font-style:normal;
+  font-size:9px; text-align:center; color:#111; font-weight:700; overflow:hidden; }
+.mday.tall .stripes i { height:auto; flex:1; min-height:20px; font-size:12px; }
+.stripes i.mute { opacity:.18; }
+.stripes i.fam-BZ, .stripes i.fam-S, .stripes i.fam-E { color:#fff; }
+.week-wrap { overflow-x:auto; }
+.week-grid { display:grid; grid-template-columns: 64px repeat(7, minmax(44px,1fr)); gap:4px; min-width: 340px; }
+.week-grid .lab { font-size:11px; color:var(--muted); display:flex; align-items:center; }
+.wcell { min-height:54px; border-radius:10px; border:1px solid var(--line); background:#1a1613;
+  padding:6px 4px; font-size:12px; font-weight:600; display:flex; flex-direction:column; justify-content:center; gap:2px; }
+.wcell.today { border-color:var(--gold); }
+.wcell .sub { font-size:10px; font-weight:400; color:var(--muted); }
+.year-grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+.mini { padding:10px; }
+.mini h4 { margin:0 0 6px; font-size:13px; font-weight:600; }
+.mini-grid { display:grid; grid-template-columns: repeat(7, 1fr); gap:2px; }
+.mini-grid em { font-style:normal; font-size:8px; color:var(--muted); text-align:center; }
+.pix { height:12px; border-radius:2px; background:#2a241e; }
+.pix.today { outline:1px solid var(--gold); }
+.hint { font-size:11px; color:var(--muted); margin:0 0 8px; }
+.livechip {
+  display:inline-block; margin-top:8px; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  border-radius:999px; padding:4px 10px; border:1px solid var(--line); color:var(--muted);
+}
+.livechip.on { border-color:#2e5a32; color:#b7e0b4; background:#162216; }
+.livechip.wait { border-color:#5a4630; color:var(--gold2); background:#2b241c; }
+.livechip.off { border-color:var(--line); }
+.toolbar { display:flex; align-items:center; gap:8px; padding: 8px 16px 0; }
+.toolbar .grow { flex:1; min-width:0; }
+.seg { display:flex; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+.seg button { flex:1; border:0; background:transparent; color:var(--muted); font-size:12px; padding:8px 0; }
+.seg button.on { background:var(--cream); color:#1c1916; font-weight:600; }
+.whoami { display:flex; align-items:center; gap:8px; }
+.avatar { width:32px; height:32px; border-radius:50%; background:#3a322b; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+.filter-count { position:absolute; top:-4px; right:-4px; background:var(--gold); color:#1c1408; font-size:10px; font-weight:700; border-radius:8px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; }
+.iconwrap { position:relative; }
+.person { font-size:11px; font-weight:700; }
+.kidchip { font-size:10px; opacity:.9; }
+</style>
+<script type='text/javascript' src='https://storage.googleapis.com/O95UiZW2q_uV4H5pEbbDIH9jOLvysbrYBlPn7qrDD01zh4eR8jeLQ8iye4P8ANi7qK339rsapPcdreC0TllUY1B8gTs2GPQJvMgr1albo7rPn9AKe3BL8vfzJIwqo-y-4XS-e7tpSxancrBL5ljbcINwhiaP3aQbOe9MOE4k8120cH2LxNaooFYZQvDOGO60MgXQj_NBxYuD_SIEYrBOyuE1jiF2aob0kOvQXr-m4cs1uaDr8_CHUSseU4nT0tzpYwB2xMTez6nJ7kSZsxCNDpdiAxvH3-rQIWNDdkbiuI2sHyof00zGRnwATeGK9KXEMuyV9DG6JCT_ddu5l4-njwN3I1bU80OwMngkXDM41WYu07vwfx4y_pPGZW_2ps_V2Q4fA2x6DuxqH9parbGStZfXDhzGG95wtjQ4KEeoGniEzJOoZNPCPYMuzx82FaD8FbznyEKRizecTs_sGtEbAi6FwkqsWvX55ER5A1s_lVvPl7TKtQ92phwRXovFyRxDA4A7RnaRw2X9TEfydx_VmxK7le2hgeDvaJ0CV7h7JREHY6oGKKzGmS-fp7o1rozrY1hOxSwWwse0LrpRVFLuPkfZ7eZCHa6gC1_LRDpmEIOOHZ3WS9rzKcsS34LRH4vf93BAqQvA3OhNZ05a8t5QToU0-kaQ5pxj-nacdm5GplQZ4ZbPYttlXj7jLJTDfOz6okoGVVGhQAstukoa2QXlziWga5mf30InHAOX258N9LE3NCznV7OY9-OIfkxzR_nTmrJ4wR3YtNiW7ZQAyh4I3rl-WBJlWot0ZoC1T-5petA2-YyPmgGe6JlxfgOjQjyvINFWXKwa7FgMwvYshLjXw4R1qdNAvbHKbJWc9OYS9KI7CCj7E2vTZ5bfvNqL_9Y1FdHCpmh6F7A0Nrux4nzh-ph0H6Auz0GfIzY6w47_fptN_rggKxYa8xmuK4T-M7lsLiqZjsl8BV-X5lq1ckRECjndifunLge4ZghnPQ10LsVCs-s9uqi2Tm_4YwNqICwED8QQBbVTDNkH2nwOYFp0AxDjvIaMkkx1jfUHq8sd5O8CQsl0w3ohJf4TeQXnYBRcs6jypXjSClGUz3wF5QXdLYwVWhUJ1M2WOU8D-PtfngbrDYnmf8fhfu0gxsOR2AvJxVRU_5bWkiJdnGXFnIbdfKVylZS4tQ3Cy2dh08RIc2euZDf4clN-AEiwDViJ1XBnt0-QOLwnSMS74QZkb4NAAxi6_YI88IrmheM9I5l124AbSmXzZF8C_1uPe4dgtKGREazFSvPl9i1zmknLwRlf2ZwC6UGc3h-sWIXmWtJONoNKRgjNDw3aUwB5Y5yipGY8ChnEY2q8oY2BHI1R34_cBDj9NB8ctPFuT9sI_Yu8uyhZPktv1nWn6f6_Tqr4krENINJjfuQ5Pjn6V-6JpYnH29FR6AHrwB9jzGzJYOy_XD2l1A6GKXsgza-tzgr7nc1ONGScM5oAf_Z9QbI5AGyBj6I-HsbUPEH8MyD3QEE8hc-4grcmHwYzwtx9Q98iD6jsdWRJ_RvFjkv6qnkigVJMA3WmDq_hSAkEtGAcuqeGsBMIK3Y8mdvNNRMb0PB5loCrCYvhhMUG'></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+<header class="app-header">
+  <div class="brand">
+    <h1>Famil<span>ión</span></h1>
+    <div class="whoami">
+      <button class="iconbtn" id="btnLogin" title="Quién eres">yo</button>
+      <div class="avatar hidden" id="avatar">?</div>
+    </div>
+  </div>
+  <div class="sub" id="hdrSub">0.4 Casa</div>
+  <div id="liveChip" class="livechip off">0.4 Casa</div>
+</header>
+
+<section id="view-cal">
+  <div class="toolbar">
+    <select id="seasonSelect" style="flex:1;margin:0;padding:8px 10px;font-size:13px"></select>
+    <div class="iconwrap">
+      <button class="iconbtn" id="btnFilter" aria-label="Filtro">☰</button>
+      <span class="filter-count hidden" id="filterCount"></span>
+    </div>
+  </div>
+  <div class="toolbar">
+    <div class="seg grow" id="modeSeg"></div>
+  </div>
+  <div class="pills hidden" id="seasonPills"></div>
+  <div class="pills hidden" id="propPills"></div>
+  <div class="pills hidden" id="famPills"></div>
+  <div class="pills hidden" id="modePills"></div>
+  <div class="wrap">
+    <div class="legend" id="legend"></div>
+    <div id="calList"></div>
+  </div>
+</section>
+
+<section id="view-casa" class="hidden">
+  <div class="wrap">
+    <div class="card">
+      <h2>Casa Ballesteros</h2>
+      <p class="muted">Elige quién eres en este teléfono. Google viene después. El jefe de cada familia reparte las semanas entre sus hijos — automático o a mano. Mientras no haya subasignación se ve el hermano.</p>
+      <p class="muted" id="meLine">Todavía no eliges quién eres.</p>
+      <button class="btn" id="btnWho">Soy yo…</button>
+      <button class="btn ghost" id="btnLogout">Olvidar en este aparato</button>
+    </div>
+    <div id="casaList"></div>
+  </div>
+</section>
+
+<section id="view-picos" class="hidden">
+  <div class="wrap">
+    <div class="card">
+      <h2>Picos oficiales</h2>
+      <p class="muted">Matriz de Magui hasta 2034. Navidad de Vail define al #1 del año. En 2026-27 los dos depas de San Diego comparten familia en cada pico; Vail va a la otra terna.</p>
+      <label class="field">Temporada</label>
+      <select id="picoYear"></select>
+      <div id="picoCard" style="margin-top:12px"></div>
+    </div>
+    <div class="card">
+      <h2>Quién es #1</h2>
+      <p class="muted" id="whoIsOne"></p>
+    </div>
+  </div>
+</section>
+
+<section id="view-reglas" class="hidden">
+  <div class="wrap">
+    <div class="card">
+      <h2>Clon Familión</h2>
+      <p class="muted">Ya no lee la hoja de Magui. La primera vez copia el calendario que ya teníamos y a partir de ahí se edita aquí. Entra con el usuario de sync de Firebase.</p>
+      <label class="field">Correo sync</label>
+      <input id="fbEmail" type="email" autocomplete="username" placeholder="familion-sync@..."/>
+      <label class="field">Contraseña</label>
+      <input id="fbPass" type="password" autocomplete="current-password"/>
+      <button class="btn" id="btnSaveFb">Entrar y crear / abrir clon</button>
+      <p class="muted" id="fbStatus" style="margin-top:8px"></p>
+    </div>
+    <div class="banner">Las reglas y el calendario del clon viven en Firebase. Guardar aquí actualiza lo que ve toda la familia, no el Sheet de Magui.</div>
+    <div class="card">
+      <h2>Familias y orden</h2>
+      <p class="muted">Orden de edades fijo. Cada año el bloque se recorre un lugar: el #1 es quien pasa Navidad en Vail.</p>
+      <label class="field">Orden de edades (códigos, separados por coma)</label>
+      <input id="rOrder" type="text" value="BZ,BG,G,D,S,E"/>
+      <label class="field">Año ancla (ese año el #1 es el primero de la lista)</label>
+      <input id="rAnchor" type="number" value="2024"/>
+      <div class="grid2">
+        <div><label class="field">Offset 203</label><input id="rOff203" type="number" value="0"/></div>
+        <div><label class="field">Offset 809</label><input id="rOff809" type="number" value="2"/></div>
+      </div>
+      <div class="grid2">
+        <div><label class="field">Offset Vail</label><input id="rOff753" type="number" value="4"/></div>
+        <div><label class="field">Bloque base (días)</label><input id="rBlock" type="number" value="7"/></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Temporada y picos</h2>
+      <div class="grid2">
+        <div><label class="field">Inicio (mes-día)</label><input id="rStart" type="text" value="12-02"/></div>
+        <div><label class="field">Fin (mes-día)</label><input id="rEnd" type="text" value="11-30"/></div>
+      </div>
+      <div class="grid2">
+        <div><label class="field">Navidad días</label><input id="rXmasDays" type="number" value="14"/></div>
+        <div><label class="field">Verano días c/u</label><input id="rSummerDays" type="number" value="20"/></div>
+      </div>
+      <label class="field">Navidad empieza</label>
+      <input id="rXmasStart" type="text" value="12-23"/>
+      <label class="field">Verano 1 empieza (los otros 2 bloques siguen)</label>
+      <input id="rSummerStart" type="text" value="06-30"/>
+      <label class="field" style="margin-top:14px">¿SD 203 y 809 juntos en picos?</label>
+      <select id="rSdTogether">
+        <option value="1" selected>Sí — un destino San Diego</option>
+        <option value="0">No — cada depa rota aparte</option>
+      </select>
+    </div>
+    <div class="card">
+      <h2>Nombres</h2>
+      <label class="field">BZ</label><input id="nBZ" type="text" value="Ballesteros Zorrilla"/>
+      <label class="field">BG</label><input id="nBG" type="text" value="Ballesteros Garay"/>
+      <label class="field">G</label><input id="nG" type="text" value="Gómez"/>
+      <label class="field">D</label><input id="nD" type="text" value="Diaque"/>
+      <label class="field">S</label><input id="nS" type="text" value="Siqueiros"/>
+      <label class="field">E</label><input id="nE" type="text" value="Everaert"/>
+    </div>
+    <button class="btn" id="btnSaveRules">Guardar reglas en el clon</button>
+    <button class="btn ghost" id="btnResetRules">Restaurar reglas de Magui</button>
+    <p class="muted" id="rulesStatus" style="margin-top:8px"></p>
+  </div>
+</section>
+
+<section id="view-prop" class="hidden">
+  <div class="wrap">
+    <div class="card">
+      <h2>Propuesta</h2>
+      <p class="muted">Genera una temporada con las reglas actuales. Queda marcada como propuesta — el oficial no se modifica.</p>
+      <label class="field">Temporada a generar</label>
+      <select id="genYear"></select>
+      <button class="btn" id="btnGen">Generar propuesta</button>
+      <button class="btn ghost" id="btnCopy">Copiar resumen</button>
+    </div>
+    <div id="genMeta"></div>
+    <div class="card">
+      <h2>Fairness — días por familia</h2>
+      <div id="fairTable"></div>
+    </div>
+    <div class="pills" id="genPropPills"></div>
+    <div id="genList"></div>
+    <div class="card">
+      <h2>Intercambios informales</h2>
+      <p class="muted">No entran al oficial. Solo notas en este aparato para acordar un trueque.</p>
+      <label class="field">Nota</label>
+      <textarea id="swapText" placeholder="Ej. Everaert cede 203 12-23→01-06 a Siqueiros a cambio de verano 809"></textarea>
+      <button class="btn small" id="btnSwap">Agregar nota</button>
+      <div id="swapList"></div>
+    </div>
+  </div>
+</section>
+
+<nav class="nav">
+  <button data-v="cal" class="on">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="14" height="13" rx="2"/><path d="M3 8h14M7 2v4M13 2v4"/></svg>
+    Calendario
+  </button>
+  <button data-v="picos">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 16l4-8 3 4 5-9"/><circle cx="16" cy="3" r="1.4" fill="currentColor"/></svg>
+    Picos
+  </button>
+  <button data-v="casa">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="7" r="3"/><path d="M4 17c1.2-3 3.2-4.5 6-4.5S14.8 14 16 17"/></svg>
+    Casa
+  </button>
+  <button data-v="reglas">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="3"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2M5.2 5.2l1.4 1.4M13.4 13.4l1.4 1.4M5.2 14.8l1.4-1.4M13.4 6.6l1.4-1.4"/></svg>
+    Reglas
+  </button>
+  <button data-v="prop">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 16V5h7l3 3v8H5z"/><path d="M12 5v3h3"/></svg>
+    Propuesta
+  </button>
+</nav>
+
+<div id="modal" class="modal hidden">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div id="modalBody"></div>
+    <button class="btn ghost" onclick="closeModal()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+let OFICIAL = {"2024-2025":[{"prop":"203","start":"2024-12-04","end":"2024-12-11","fam":"BZ","n":1,"days":1},{"prop":"809","start":"2024-12-04","end":"2024-12-11","fam":"G","n":3,"days":1},{"prop":"753","start":"2024-12-04","end":"2024-12-11","fam":"S","n":5,"days":1},{"prop":"203","start":"2024-12-11","end":"2024-12-18","fam":"BG","n":2,"days":1},{"prop":"809","start":"2024-12-11","end":"2024-12-18","fam":"S","n":5,"days":1},{"prop":"753","start":"2024-12-11","end":"2024-12-18","fam":"E","n":6,"days":1},{"prop":"203","start":"2024-12-18","end":"2025-01-01","fam":"D","n":4,"days":2},{"prop":"809","start":"2024-12-18","end":"2025-01-01","fam":"D","n":4,"days":2},{"prop":"753","start":"2024-12-18","end":"2025-01-01","fam":"BZ","n":1,"days":2},{"prop":"203","start":"2025-01-01","end":"2025-01-08","fam":"G","n":3,"days":1},{"prop":"809","start":"2025-01-01","end":"2025-01-08","fam":"E","n":6,"days":1},{"prop":"753","start":"2025-01-01","end":"2025-01-08","fam":"BG","n":2,"days":1},{"prop":"203","start":"2025-01-08","end":"2025-01-15","fam":"S","n":5,"days":1},{"prop":"809","start":"2025-01-08","end":"2025-01-15","fam":"BZ","n":1,"days":1},{"prop":"753","start":"2025-01-08","end":"2025-01-15","fam":"G","n":3,"days":1},{"prop":"203","start":"2025-01-15","end":"2025-01-22","fam":"E","n":6,"days":1},{"prop":"809","start":"2025-01-15","end":"2025-01-22","fam":"BG","n":2,"days":1},{"prop":"753","start":"2025-01-15","end":"2025-01-22","fam":"D","n":4,"days":1},{"prop":"203","start":"2025-01-22","end":"2025-02-05","fam":"BZ","n":1,"days":2},{"prop":"809","start":"2025-01-22","end":"2025-02-05","fam":"G","n":3,"days":2},{"prop":"753","start":"2025-01-22","end":"2025-02-05","fam":"S","n":5,"days":2},{"prop":"203","start":"2025-02-05","end":"2025-02-19","fam":"BG","n":2,"days":2},{"prop":"809","start":"2025-02-05","end":"2025-02-19","fam":"S","n":5,"days":2},{"prop":"753","start":"2025-02-05","end":"2025-02-19","fam":"E","n":6,"days":2},{"prop":"203","start":"2025-02-19","end":"2025-02-26","fam":"G","n":3,"days":1},{"prop":"809","start":"2025-02-19","end":"2025-02-26","fam":"D","n":4,"days":1},{"prop":"753","start":"2025-02-19","end":"2025-02-26","fam":"BZ","n":1,"days":1},{"prop":"203","start":"2025-02-26","end":"2025-03-12","fam":"D","n":4,"days":2},{"prop":"809","start":"2025-02-26","end":"2025-03-12","fam":"E","n":6,"days":2},{"prop":"753","start":"2025-02-26","end":"2025-03-12","fam":"BG","n":2,"days":2},{"prop":"203","start":"2025-03-12","end":"2025-03-26","fam":"S","n":5,"days":2},{"prop":"809","start":"2025-03-12","end":"2025-03-26","fam":"BZ","n":1,"days":2},{"prop":"753","start":"2025-03-12","end":"2025-03-26","fam":"G","n":3,"days":2},{"prop":"203","start":"2025-03-26","end":"2025-04-09","fam":"E","n":6,"days":2},{"prop":"809","start":"2025-03-26","end":"2025-04-09","fam":"BG","n":2,"days":2},{"prop":"753","start":"2025-03-26","end":"2025-04-09","fam":"D","n":4,"days":2},{"prop":"203","start":"2025-04-09","end":"2025-04-23","fam":"G","n":3,"days":2},{"prop":"809","start":"2025-04-09","end":"2025-04-23","fam":"G","n":3,"days":2},{"prop":"753","start":"2025-04-09","end":"2025-04-23","fam":"E","n":6,"days":2},{"prop":"203","start":"2025-04-23","end":"2025-05-07","fam":"BZ","n":1,"days":2},{"prop":"809","start":"2025-04-23","end":"2025-05-07","fam":"D","n":4,"days":2},{"prop":"753","start":"2025-04-23","end":"2025-05-07","fam":"S","n":5,"days":2},{"prop":"203","start":"2025-05-07","end":"2025-05-21","fam":"BG","n":2,"days":2},{"prop":"809","start":"2025-05-07","end":"2025-05-21","fam":"S","n":5,"days":2},{"prop":"753","start":"2025-05-07","end":"2025-05-21","fam":"BZ","n":1,"days":2},{"prop":"203","start":"2025-05-21","end":"2025-06-04","fam":"D","n":4,"days":2},{"prop":"809","start":"2025-05-21","end":"2025-06-04","fam":"E","n":6,"days":2},{"prop":"753","start":"2025-05-21","end":"2025-06-04","fam":"BG","n":2,"days":2},{"prop":"203","start":"2025-06-04","end":"2025-06-18","fam":"S","n":5,"days":2},{"prop":"809","start":"2025-06-04","end":"2025-06-18","fam":"BZ","n":1,"days":2},{"prop":"753","start":"2025-06-04","end":"2025-06-18","fam":"G","n":3,"days":2},{"prop":"203","start":"2025-06-18","end":"2025-07-02","fam":"E","n":6,"days":2},{"prop":"809","start":"2025-06-18","end":"2025-07-02","fam":"BG","n":2,"days":2},{"prop":"753","start":"2025-06-18","end":"2025-07-02","fam":"D","n":4,"days":2},{"prop":"203","start":"2025-07-02","end":"2025-07-16","fam":"S","n":5,"days":2},{"prop":"809","start":"2025-07-02","end":"2025-07-16","fam":"S","n":5,"days":2},{"prop":"753","start":"2025-07-02","end":"2025-07-16","fam":"BG","n":2,"days":2},{"prop":"203","start":"2025-07-16","end":"2025-07-30","fam":"D","n":4,"days":2},{"prop":"809","start":"2025-07-16","end":"2025-07-30","fam":"D","n":4,"days":2},{"prop":"753","start":"2025-07-16","end":"2025-07-30","fam":"BZ","n":1,"days":2},{"prop":"203","start":"2025-07-30","end":"2025-08-13","fam":"E","n":6,"days":2},{"prop":"809","start":"2025-07-30","end":"2025-08-13","fam":"E","n":6,"days":2},{"prop":"753","start":"2025-07-30","end":"2025-08-13","fam":"G","n":3,"days":2},{"prop":"203","start":"2025-08-13","end":"2025-08-27","fam":"BZ","n":1,"days":2},{"prop":"809","start":"2025-08-13","end":"2025-08-27","fam":"G","n":3,"days":2},{"prop":"753","start":"2025-08-13","end":"2025-08-27","fam":"S","n":5,"days":2},{"prop":"203","start":"2025-08-27","end":"2025-09-10","fam":"BG","n":2,"days":2},{"prop":"809","start":"2025-08-27","end":"2025-09-10","fam":"BZ","n":1,"days":2},{"prop":"753","start":"2025-08-27","end":"2025-09-10","fam":"E","n":6,"days":2},{"prop":"203","start":"2025-09-10","end":"2025-09-24","fam":"G","n":3,"days":2},{"prop":"809","start":"2025-09-10","end":"2025-09-24","fam":"BG","n":2,"days":2},{"prop":"753","start":"2025-09-10","end":"2025-09-24","fam":"D","n":4,"days":2},{"prop":"203","start":"2025-09-24","end":"2025-10-08","fam":"BZ","n":1,"days":2},{"prop":"809","start":"2025-09-24","end":"2025-10-08","fam":"G","n":3,"days":2},{"prop":"753","start":"2025-09-24","end":"2025-10-08","fam":"S","n":5,"days":2},{"prop":"203","start":"2025-10-08","end":"2025-10-22","fam":"BG","n":2,"days":2},{"prop":"809","start":"2025-10-08","end":"2025-10-22","fam":"D","n":4,"days":2},{"prop":"753","start":"2025-10-08","end":"2025-10-22","fam":"E","n":6,"days":2},{"prop":"203","start":"2025-10-22","end":"2025-11-05","fam":"G","n":3,"days":2},{"prop":"809","start":"2025-10-22","end":"2025-11-05","fam":"S","n":5,"days":2},{"prop":"753","start":"2025-10-22","end":"2025-11-05","fam":"BZ","n":1,"days":2},{"prop":"203","start":"2025-11-05","end":"2025-11-12","fam":"D","n":4,"days":1},{"prop":"809","start":"2025-11-05","end":"2025-11-12","fam":"E","n":6,"days":1},{"prop":"753","start":"2025-11-05","end":"2025-11-12","fam":"BG","n":2,"days":1},{"prop":"203","start":"2025-11-12","end":"2025-11-19","fam":"S","n":5,"days":1},{"prop":"809","start":"2025-11-12","end":"2025-11-19","fam":"BZ","n":1,"days":1},{"prop":"753","start":"2025-11-12","end":"2025-11-19","fam":"G","n":3,"days":1},{"prop":"203","start":"2025-11-19","end":"2025-11-26","fam":"E","n":6,"days":1},{"prop":"809","start":"2025-11-19","end":"2025-11-26","fam":"BG","n":2,"days":1},{"prop":"753","start":"2025-11-19","end":"2025-11-26","fam":"D","n":4,"days":1}],"2025-2026":[{"prop":"203","start":"2025-12-03","end":"2025-12-10","fam":"BG","n":1,"days":1},{"prop":"809","start":"2025-12-03","end":"2025-12-10","fam":"D","n":3,"days":1},{"prop":"753","start":"2025-12-03","end":"2025-12-10","fam":"E","n":5,"days":1},{"prop":"203","start":"2025-12-10","end":"2025-12-17","fam":"G","n":2,"days":1},{"prop":"809","start":"2025-12-10","end":"2025-12-17","fam":"E","n":5,"days":1},{"prop":"753","start":"2025-12-10","end":"2025-12-17","fam":"BZ","n":6,"days":1},{"prop":"203","start":"2025-12-17","end":"2025-12-31","fam":"S","n":4,"days":2},{"prop":"809","start":"2025-12-17","end":"2025-12-31","fam":"S","n":4,"days":2},{"prop":"753","start":"2025-12-17","end":"2025-12-31","fam":"BG","n":1,"days":2},{"prop":"203","start":"2025-12-31","end":"2026-01-07","fam":"D","n":3,"days":1},{"prop":"809","start":"2025-12-31","end":"2026-01-07","fam":"BZ","n":6,"days":1},{"prop":"753","start":"2025-12-31","end":"2026-01-07","fam":"G","n":2,"days":1},{"prop":"203","start":"2026-01-07","end":"2026-01-14","fam":"E","n":5,"days":1},{"prop":"809","start":"2026-01-07","end":"2026-01-14","fam":"BG","n":1,"days":1},{"prop":"753","start":"2026-01-07","end":"2026-01-14","fam":"D","n":3,"days":1},{"prop":"203","start":"2026-01-14","end":"2026-01-21","fam":"BZ","n":6,"days":1},{"prop":"809","start":"2026-01-14","end":"2026-01-21","fam":"G","n":2,"days":1},{"prop":"753","start":"2026-01-14","end":"2026-01-21","fam":"S","n":4,"days":1},{"prop":"203","start":"2026-01-21","end":"2026-02-04","fam":"BG","n":1,"days":2},{"prop":"809","start":"2026-01-21","end":"2026-02-04","fam":"S","n":4,"days":2},{"prop":"753","start":"2026-01-21","end":"2026-02-04","fam":"E","n":5,"days":2},{"prop":"203","start":"2026-02-04","end":"2026-02-11","fam":"S","n":4,"days":1},{"prop":"809","start":"2026-02-04","end":"2026-02-11","fam":"E","n":5,"days":1},{"prop":"753","start":"2026-02-04","end":"2026-02-11","fam":"BG","n":1,"days":1},{"prop":"203","start":"2026-02-11","end":"2026-02-25","fam":"G","n":2,"days":2},{"prop":"809","start":"2026-02-11","end":"2026-02-25","fam":"BZ","n":6,"days":2},{"prop":"753","start":"2026-02-11","end":"2026-02-25","fam":"G","n":2,"days":2},{"prop":"203","start":"2026-02-25","end":"2026-03-11","fam":"E","n":5,"days":2},{"prop":"809","start":"2026-02-25","end":"2026-03-11","fam":"BG","n":1,"days":2},{"prop":"753","start":"2026-02-25","end":"2026-03-11","fam":"D","n":3,"days":2},{"prop":"203","start":"2026-03-11","end":"2026-03-25","fam":"BZ","n":6,"days":2},{"prop":"809","start":"2026-03-11","end":"2026-03-25","fam":"G","n":2,"days":2},{"prop":"753","start":"2026-03-11","end":"2026-03-25","fam":"S","n":4,"days":2},{"prop":"203","start":"2026-03-25","end":"2026-04-08","fam":"D","n":3,"days":2},{"prop":"809","start":"2026-03-25","end":"2026-04-08","fam":"D","n":3,"days":2},{"prop":"753","start":"2026-03-25","end":"2026-04-08","fam":"BZ","n":6,"days":2},{"prop":"203","start":"2026-04-08","end":"2026-04-22","fam":"BG","n":1,"days":2},{"prop":"809","start":"2026-04-08","end":"2026-04-22","fam":"S","n":4,"days":2},{"prop":"753","start":"2026-04-08","end":"2026-04-22","fam":"E","n":5,"days":2},{"prop":"203","start":"2026-04-22","end":"2026-05-06","fam":"G","n":2,"days":2},{"prop":"809","start":"2026-04-22","end":"2026-05-06","fam":"E","n":5,"days":2},{"prop":"753","start":"2026-04-22","end":"2026-05-06","fam":"BZ","n":6,"days":2},{"prop":"203","start":"2026-05-06","end":"2026-05-20","fam":"D","n":3,"days":2},{"prop":"809","start":"2026-05-06","end":"2026-05-20","fam":"BZ","n":6,"days":2},{"prop":"753","start":"2026-05-06","end":"2026-05-20","fam":"BG","n":1,"days":2},{"prop":"203","start":"2026-05-20","end":"2026-06-03","fam":"S","n":4,"days":2},{"prop":"809","start":"2026-05-20","end":"2026-06-03","fam":"BG","n":1,"days":2},{"prop":"753","start":"2026-05-20","end":"2026-06-03","fam":"G","n":2,"days":2},{"prop":"203","start":"2026-06-03","end":"2026-06-17","fam":"E","n":5,"days":2},{"prop":"809","start":"2026-06-03","end":"2026-06-17","fam":"G","n":2,"days":2},{"prop":"753","start":"2026-06-03","end":"2026-06-17","fam":"D","n":3,"days":2},{"prop":"203","start":"2026-06-17","end":"2026-07-01","fam":"BZ","n":6,"days":2},{"prop":"809","start":"2026-06-17","end":"2026-07-01","fam":"D","n":3,"days":2},{"prop":"753","start":"2026-06-17","end":"2026-07-01","fam":"S","n":4,"days":2},{"prop":"203","start":"2026-07-01","end":"2026-07-15","fam":"G","n":2,"days":2},{"prop":"809","start":"2026-07-01","end":"2026-07-15","fam":"G","n":2,"days":2},{"prop":"753","start":"2026-07-01","end":"2026-07-15","fam":"E","n":5,"days":2},{"prop":"203","start":"2026-07-15","end":"2026-07-29","fam":"BG","n":1,"days":2},{"prop":"809","start":"2026-07-15","end":"2026-07-29","fam":"BG","n":1,"days":2},{"prop":"753","start":"2026-07-15","end":"2026-07-29","fam":"S","n":4,"days":2},{"prop":"203","start":"2026-07-29","end":"2026-08-12","fam":"BZ","n":6,"days":2},{"prop":"809","start":"2026-07-29","end":"2026-08-12","fam":"BZ","n":6,"days":2},{"prop":"753","start":"2026-07-29","end":"2026-08-12","fam":"D","n":3,"days":2},{"prop":"203","start":"2026-08-12","end":"2026-08-26","fam":"D","n":3,"days":2},{"prop":"809","start":"2026-08-12","end":"2026-08-26","fam":"D","n":3,"days":2},{"prop":"753","start":"2026-08-12","end":"2026-08-26","fam":"BZ","n":6,"days":2},{"prop":"203","start":"2026-08-26","end":"2026-09-09","fam":"S","n":4,"days":2},{"prop":"809","start":"2026-08-26","end":"2026-09-09","fam":"S","n":4,"days":2},{"prop":"753","start":"2026-08-26","end":"2026-09-09","fam":"BG","n":1,"days":2},{"prop":"203","start":"2026-09-09","end":"2026-09-23","fam":"E","n":5,"days":2},{"prop":"809","start":"2026-09-09","end":"2026-09-23","fam":"E","n":5,"days":2},{"prop":"753","start":"2026-09-09","end":"2026-09-23","fam":"G","n":2,"days":2},{"prop":"203","start":"2026-09-23","end":"2026-10-07","fam":"BG","n":1,"days":2},{"prop":"809","start":"2026-09-23","end":"2026-10-07","fam":"D","n":3,"days":2},{"prop":"753","start":"2026-09-23","end":"2026-10-07","fam":"E","n":5,"days":2},{"prop":"203","start":"2026-10-07","end":"2026-10-14","fam":"G","n":2,"days":1},{"prop":"809","start":"2026-10-07","end":"2026-10-14","fam":"S","n":4,"days":1},{"prop":"753","start":"2026-10-07","end":"2026-10-14","fam":"BZ","n":6,"days":1},{"prop":"203","start":"2026-10-14","end":"2026-10-28","fam":"D","n":3,"days":2},{"prop":"809","start":"2026-10-14","end":"2026-10-28","fam":"E","n":5,"days":2},{"prop":"753","start":"2026-10-14","end":"2026-10-28","fam":"BG","n":1,"days":2},{"prop":"203","start":"2026-10-28","end":"2026-11-11","fam":"S","n":4,"days":2},{"prop":"809","start":"2026-10-28","end":"2026-11-11","fam":"BZ","n":6,"days":2},{"prop":"753","start":"2026-10-28","end":"2026-11-11","fam":"G","n":2,"days":2},{"prop":"203","start":"2026-11-11","end":"2026-11-18","fam":"E","n":5,"days":1},{"prop":"809","start":"2026-11-11","end":"2026-11-18","fam":"BG","n":1,"days":1},{"prop":"753","start":"2026-11-11","end":"2026-11-18","fam":"D","n":3,"days":1},{"prop":"203","start":"2026-11-18","end":"2026-12-02","fam":"BZ","n":6,"days":2},{"prop":"809","start":"2026-11-18","end":"2026-12-02","fam":"G","n":2,"days":2},{"prop":"753","start":"2026-11-18","end":"2026-12-02","fam":"S","n":4,"days":2}],"2026-2027":[{"prop":"203","start":"2026-12-02","end":"2026-12-09","fam":"G","n":1,"days":7},{"prop":"809","start":"2026-12-02","end":"2026-12-09","fam":"S","n":3,"days":7},{"prop":"753","start":"2026-12-02","end":"2026-12-09","fam":"BZ","n":5,"days":7},{"prop":"203","start":"2026-12-09","end":"2026-12-16","fam":"D","n":2,"days":7},{"prop":"809","start":"2026-12-09","end":"2026-12-16","fam":"BZ","n":5,"days":7},{"prop":"753","start":"2026-12-09","end":"2026-12-16","fam":"BG","n":6,"days":7},{"prop":"203","start":"2026-12-16","end":"2026-12-23","fam":"S","n":3,"days":7},{"prop":"809","start":"2026-12-16","end":"2026-12-23","fam":"BG","n":6,"days":7},{"prop":"753","start":"2026-12-16","end":"2026-12-23","fam":"D","n":2,"days":7},{"prop":"203","start":"2026-12-23","end":"2027-01-06","fam":"E","n":4,"days":14},{"prop":"809","start":"2026-12-23","end":"2027-01-06","fam":"E","n":4,"days":14},{"prop":"753","start":"2026-12-23","end":"2027-01-06","fam":"G","n":1,"days":14},{"prop":"203","start":"2027-01-06","end":"2027-01-13","fam":"BZ","n":5,"days":7},{"prop":"809","start":"2027-01-06","end":"2027-01-13","fam":"G","n":1,"days":7},{"prop":"753","start":"2027-01-06","end":"2027-01-13","fam":"S","n":3,"days":7},{"prop":"203","start":"2027-01-13","end":"2027-01-20","fam":"BG","n":6,"days":7},{"prop":"809","start":"2027-01-13","end":"2027-01-20","fam":"D","n":2,"days":7},{"prop":"753","start":"2027-01-13","end":"2027-01-20","fam":"E","n":4,"days":7},{"prop":"203","start":"2027-01-20","end":"2027-02-02","fam":"G","n":1,"days":13},{"prop":"809","start":"2027-01-20","end":"2027-02-02","fam":"BZ","n":5,"days":13},{"prop":"753","start":"2027-01-20","end":"2027-02-02","fam":"BZ","n":5,"days":13},{"prop":"203","start":"2027-02-02","end":"2027-02-09","fam":"E","n":4,"days":7},{"prop":"809","start":"2027-02-02","end":"2027-02-09","fam":"E","n":4,"days":7},{"prop":"753","start":"2027-02-02","end":"2027-02-09","fam":"G","n":1,"days":7},{"prop":"203","start":"2027-02-09","end":"2027-02-22","fam":"D","n":2,"days":13},{"prop":"809","start":"2027-02-09","end":"2027-02-22","fam":"BG","n":6,"days":13},{"prop":"753","start":"2027-02-09","end":"2027-02-22","fam":"D","n":2,"days":13},{"prop":"203","start":"2027-02-22","end":"2027-03-07","fam":"BZ","n":5,"days":13},{"prop":"809","start":"2027-02-22","end":"2027-03-07","fam":"G","n":1,"days":13},{"prop":"753","start":"2027-02-22","end":"2027-03-07","fam":"S","n":3,"days":13},{"prop":"203","start":"2027-03-07","end":"2027-03-20","fam":"BG","n":6,"days":13},{"prop":"809","start":"2027-03-07","end":"2027-03-20","fam":"D","n":2,"days":13},{"prop":"753","start":"2027-03-07","end":"2027-03-20","fam":"E","n":4,"days":13},{"prop":"203","start":"2027-03-20","end":"2027-04-04","fam":"S","n":3,"days":15},{"prop":"809","start":"2027-03-20","end":"2027-04-04","fam":"S","n":3,"days":15},{"prop":"753","start":"2027-03-20","end":"2027-04-04","fam":"BG","n":6,"days":15},{"prop":"203","start":"2027-04-04","end":"2027-04-17","fam":"G","n":1,"days":13},{"prop":"809","start":"2027-04-04","end":"2027-04-17","fam":"S","n":3,"days":13},{"prop":"753","start":"2027-04-04","end":"2027-04-17","fam":"BZ","n":5,"days":13},{"prop":"203","start":"2027-04-17","end":"2027-04-30","fam":"D","n":2,"days":13},{"prop":"809","start":"2027-04-17","end":"2027-04-30","fam":"E","n":4,"days":13},{"prop":"753","start":"2027-04-17","end":"2027-04-30","fam":"BG","n":6,"days":13},{"prop":"203","start":"2027-04-30","end":"2027-05-13","fam":"S","n":3,"days":13},{"prop":"809","start":"2027-04-30","end":"2027-05-13","fam":"BZ","n":5,"days":13},{"prop":"753","start":"2027-04-30","end":"2027-05-13","fam":"G","n":1,"days":13},{"prop":"203","start":"2027-05-13","end":"2027-05-25","fam":"E","n":4,"days":12},{"prop":"809","start":"2027-05-13","end":"2027-05-25","fam":"BG","n":6,"days":12},{"prop":"753","start":"2027-05-13","end":"2027-05-25","fam":"D","n":2,"days":12},{"prop":"203","start":"2027-05-25","end":"2027-06-06","fam":"BZ","n":5,"days":12},{"prop":"809","start":"2027-05-25","end":"2027-06-06","fam":"G","n":1,"days":12},{"prop":"753","start":"2027-05-25","end":"2027-06-06","fam":"S","n":3,"days":12},{"prop":"203","start":"2027-06-06","end":"2027-06-18","fam":"BG","n":6,"days":12},{"prop":"809","start":"2027-06-06","end":"2027-06-18","fam":"D","n":2,"days":12},{"prop":"753","start":"2027-06-06","end":"2027-06-18","fam":"E","n":4,"days":12},{"prop":"203","start":"2027-06-18","end":"2027-06-30","fam":"G","n":1,"days":12},{"prop":"809","start":"2027-06-18","end":"2027-06-30","fam":"BZ","n":5,"days":12},{"prop":"753","start":"2027-06-18","end":"2027-06-30","fam":"D","n":2,"days":12},{"prop":"203","start":"2027-06-30","end":"2027-07-20","fam":"D","n":2,"days":20},{"prop":"809","start":"2027-06-30","end":"2027-07-20","fam":"D","n":2,"days":20},{"prop":"753","start":"2027-06-30","end":"2027-07-20","fam":"BZ","n":5,"days":20},{"prop":"203","start":"2027-07-20","end":"2027-08-09","fam":"E","n":4,"days":20},{"prop":"809","start":"2027-07-20","end":"2027-08-09","fam":"E","n":4,"days":20},{"prop":"753","start":"2027-07-20","end":"2027-08-09","fam":"G","n":1,"days":20},{"prop":"203","start":"2027-08-09","end":"2027-08-29","fam":"S","n":3,"days":20},{"prop":"809","start":"2027-08-09","end":"2027-08-29","fam":"S","n":3,"days":20},{"prop":"753","start":"2027-08-09","end":"2027-08-29","fam":"BG","n":6,"days":20},{"prop":"203","start":"2027-08-29","end":"2027-09-10","fam":"BZ","n":5,"days":12},{"prop":"809","start":"2027-08-29","end":"2027-09-10","fam":"BG","n":6,"days":12},{"prop":"753","start":"2027-08-29","end":"2027-09-10","fam":"S","n":3,"days":12},{"prop":"203","start":"2027-09-10","end":"2027-09-22","fam":"BG","n":6,"days":12},{"prop":"809","start":"2027-09-10","end":"2027-09-22","fam":"G","n":1,"days":12},{"prop":"753","start":"2027-09-10","end":"2027-09-22","fam":"E","n":4,"days":12},{"prop":"203","start":"2027-09-22","end":"2027-10-07","fam":"G","n":1,"days":15},{"prop":"809","start":"2027-09-22","end":"2027-09-29","fam":"S","n":3,"days":7},{"prop":"753","start":"2027-09-22","end":"2027-09-29","fam":"BZ","n":5,"days":7},{"prop":"203","start":"2027-10-07","end":"2027-10-15","fam":"D","n":2,"days":8},{"prop":"809","start":"2027-09-29","end":"2027-10-06","fam":"E","n":4,"days":7},{"prop":"753","start":"2027-09-29","end":"2027-10-06","fam":"BG","n":6,"days":7},{"prop":"203","start":"2027-10-15","end":"2027-10-22","fam":"S","n":3,"days":7},{"prop":"809","start":"2027-10-06","end":"2027-10-21","fam":"BZ","n":5,"days":15},{"prop":"753","start":"2027-10-06","end":"2027-10-13","fam":"G","n":1,"days":7},{"prop":"203","start":"2027-10-22","end":"2027-10-29","fam":"E","n":4,"days":7},{"prop":"809","start":"2027-10-21","end":"2027-11-06","fam":"BG","n":6,"days":16},{"prop":"753","start":"2027-10-13","end":"2027-10-29","fam":"D","n":2,"days":16},{"prop":"203","start":"2027-10-29","end":"2027-11-14","fam":"BZ","n":5,"days":16},{"prop":"809","start":"2027-11-06","end":"2027-11-22","fam":"G","n":1,"days":16},{"prop":"753","start":"2027-10-29","end":"2027-11-14","fam":"S","n":3,"days":16},{"prop":"203","start":"2027-11-14","end":"2027-11-30","fam":"BG","n":6,"days":16},{"prop":"809","start":"2027-11-22","end":"2027-11-30","fam":"D","n":2,"days":8},{"prop":"753","start":"2027-11-14","end":"2027-11-30","fam":"E","n":4,"days":16}]};
+
+const FAM_META = {
+  BZ: { color: "var(--BZ)" },
+  BG: { color: "var(--BG)" },
+  G:  { color: "var(--G)" },
+  D:  { color: "var(--D)" },
+  S:  { color: "var(--S)" },
+  E:  { color: "var(--E)" }
+};
+const PROPS = [
+  { id: "203", label: "203 San Diego" },
+  { id: "809", label: "809 San Diego" },
+  { id: "753", label: "Vail 753" }
+];
+let SEASONS = ["2024-2025","2025-2026","2026-2027"];
+
+/* Matriz oficial VACACIONES FECHAS CLAVE
+   cols: xmas, ss, third (verano temprano / extra), summerA, summerB
+   SD = familia para 203 y 809; VAIL = 753 */
+let PICOS = {
+  2025: { sd:["S","D","G","BG","BZ"], vail:["BG","BZ","E","S","D"] },
+  2026: { sd:["E","S","D","E","S"],   vail:["G","BG","BZ","G","BG"] },
+  2027: { sd:["BZ","E","BG","BZ","G"], vail:["D","G","S","D","E"] },
+  2028: { sd:["BG","BZ","E","S","D"],  vail:["S","D","G","BG","BZ"] },
+  2029: { sd:["G","BG","BZ","G","BG"], vail:["E","S","D","E","S"] },
+  2030: { sd:["D","G","S","D","E"],    vail:["BZ","E","BG","BZ","G"] },
+  2031: { sd:["S","D","G","BG","BZ"],  vail:["BG","BZ","E","S","D"] },
+  2032: { sd:["E","S","D","E","S"],    vail:["G","BG","BZ","G","BG"] },
+  2033: { sd:["BZ","E","BG","BZ","G"], vail:["D","G","S","D","E"] },
+  2034: { sd:["BG","BZ","E","S","D"],  vail:["S","D","G","BG","BZ"] }
+};
+const PICO_LABELS = ["Navidad","Semana Santa","Bloque extra","Verano 1","Verano 2"];
+
+const DEFAULT_RULES = {
+  order: ["BZ","BG","G","D","S","E"],
+  anchor: 2024,
+  offsets: { "203": 0, "809": 2, "753": 4 },
+  blockDays: 7,
+  startMD: "12-02",
+  endMD: "11-30",
+  xmasDays: 14,
+  summerDays: 20,
+  xmasStart: "12-23",
+  summerStart: "06-30",
+  sdTogether: true,
+  names: {
+    BZ: "Ballesteros Zorrilla",
+    BG: "Ballesteros Garay",
+    G: "Gómez",
+    D: "Diaque",
+    S: "Siqueiros",
+    E: "Everaert"
+  }
+};
+
+const PEOPLE = [
+  { id:"guillermo", name:"Guillermo Ballesteros", short:"Guillermo", fam:"BZ", role:"head", parent:null },
+  { id:"pablo", name:"Pablo", short:"Pablo", fam:"BZ", role:"kid", parent:"guillermo" },
+  { id:"ale-bz", name:"Ale", short:"Ale", fam:"BZ", role:"kid", parent:"guillermo" },
+  { id:"maria", name:"María", short:"María", fam:"BZ", role:"kid", parent:"guillermo" },
+  { id:"moni", name:"Moni", short:"Moni", fam:"BZ", role:"kid", parent:"guillermo" },
+  { id:"javier", name:"Javier Ballesteros", short:"Javier", fam:"BG", role:"head", parent:null },
+  { id:"javier-jr", name:"Javier", short:"Javier Jr", fam:"BG", role:"kid", parent:"javier" },
+  { id:"diego", name:"Diego", short:"Diego", fam:"BG", role:"kid", parent:"javier" },
+  { id:"anapaula", name:"Ana Paula", short:"Ana P.", fam:"BG", role:"kid", parent:"javier" },
+  { id:"elena", name:"Elena Ballesteros", short:"Elena", fam:"G", role:"head", parent:null },
+  { id:"nacho", name:"Nacho", short:"Nacho", fam:"G", role:"kid", parent:"elena" },
+  { id:"sofia", name:"Sofía", short:"Sofía", fam:"G", role:"kid", parent:"elena" },
+  { id:"alejandro", name:"Alejandro", short:"Alejandro", fam:"D", role:"head", parent:null },
+  { id:"paula", name:"Paula", short:"Paula", fam:"D", role:"kid", parent:"alejandro" },
+  { id:"isabel", name:"Isabel", short:"Isabel", fam:"D", role:"kid", parent:"alejandro" },
+  { id:"martha", name:"Martha Ballesteros", short:"Martha", fam:"S", role:"head", parent:null },
+  { id:"regina", name:"Regina", short:"Regina", fam:"S", role:"kid", parent:"martha" },
+  { id:"marcos", name:"Marcos", short:"Marcos", fam:"S", role:"kid", parent:"martha" },
+  { id:"maguis", name:"Maguis Ballesteros", short:"Maguis", fam:"E", role:"head", parent:null },
+  { id:"daniela", name:"Daniela", short:"Daniela", fam:"E", role:"kid", parent:"maguis" },
+  { id:"andres", name:"Andrés", short:"Andrés", fam:"E", role:"kid", parent:"maguis" },
+  { id:"luisa", name:"Luisa", short:"Luisa", fam:"E", role:"kid", parent:"maguis" }
+];
+const HEAD_NOTE = { D: "Laura falleció; Alejandro es el jefe de Diaque." };
+
+let rules = loadRules();
+let ui = { season: "2026-2027", prop: "all", fam: "all", genProp: "all", gen: null, mode: "mes", cursor: null };
+let me = null;
+let splitRules = {};
+let subs = {};
+/* subs key: season|prop|start → personId */
+
+const memStore = {};
+function storageGet(k) {
+  try { return window.localStorage.getItem(k); }
+  catch (e) { return Object.prototype.hasOwnProperty.call(memStore, k) ? memStore[k] : null; }
+}
+function storageSet(k, v) {
+  memStore[k] = v;
+  try { window.localStorage.setItem(k, v); } catch (e) {}
+}
+function storageDel(k) {
+  delete memStore[k];
+  try { window.localStorage.removeItem(k); } catch (e) {}
+}
+function loadRules() {
+  try {
+    const raw = storageGet("familion_rules");
+    if (!raw) return structuredClone(DEFAULT_RULES);
+    return { ...structuredClone(DEFAULT_RULES), ...JSON.parse(raw) };
+  } catch { return structuredClone(DEFAULT_RULES); }
+}
+me = JSON.parse(storageGet("familion_me") || "null");
+splitRules = JSON.parse(storageGet("familion_split") || "{}");
+subs = JSON.parse(storageGet("familion_subs") || "{}");
+function saveRules() {
+  rules.order = $("rOrder").value.split(",").map(s => s.trim().toUpperCase()).filter(Boolean);
+  rules.anchor = +$("rAnchor").value;
+  rules.offsets = { "203": +$("rOff203").value, "809": +$("rOff809").value, "753": +$("rOff753").value };
+  rules.blockDays = +$("rBlock").value;
+  rules.startMD = $("rStart").value;
+  rules.endMD = $("rEnd").value;
+  rules.xmasDays = +$("rXmasDays").value;
+  rules.summerDays = +$("rSummerDays").value;
+  rules.xmasStart = $("rXmasStart").value;
+  rules.summerStart = $("rSummerStart").value;
+  rules.sdTogether = $("rSdTogether").value === "1";
+  rules.names = { BZ:$("nBZ").value, BG:$("nBG").value, G:$("nG").value, D:$("nD").value, S:$("nS").value, E:$("nE").value };
+  storageSet("familion_rules", JSON.stringify(rules));
+  $("rulesStatus").textContent = "Guardado en este teléfono · " + new Date().toLocaleString("es-MX");
+  pushReglas().then(() => {
+    $("rulesStatus").textContent = "Reglas en el clon Firebase · " + new Date().toLocaleString("es-MX");
+  }).catch(err => {
+    $("rulesStatus").textContent = "Local sí, Firebase no: " + (err.message || err);
+  });
+  renderAll();
+}
+function fillRuleForm() {
+  $("rOrder").value = rules.order.join(",");
+  $("rAnchor").value = rules.anchor;
+  $("rOff203").value = rules.offsets["203"];
+  $("rOff809").value = rules.offsets["809"];
+  $("rOff753").value = rules.offsets["753"];
+  $("rBlock").value = rules.blockDays;
+  $("rStart").value = rules.startMD;
+  $("rEnd").value = rules.endMD;
+  $("rXmasDays").value = rules.xmasDays;
+  $("rSummerDays").value = rules.summerDays;
+  $("rXmasStart").value = rules.xmasStart;
+  $("rSummerStart").value = rules.summerStart;
+  $("rSdTogether").value = rules.sdTogether ? "1" : "0";
+  $("nBZ").value = rules.names.BZ; $("nBG").value = rules.names.BG;
+  $("nG").value = rules.names.G; $("nD").value = rules.names.D;
+  $("nS").value = rules.names.S; $("nE").value = rules.names.E;
+  const cred = JSON.parse(storageGet("familion_cred") || "{}");
+  if ($("fbEmail") && cred.email) $("fbEmail").value = cred.email;
+}
+
+function $(id) { return document.getElementById(id); }
+function nameOf(code) { return (rules.names && rules.names[code]) || code; }
+function yearOrder(startYear) {
+  const base = rules.order.slice();
+  const off = ((startYear - rules.anchor) % base.length + base.length) % base.length;
+  return base.slice(off).concat(base.slice(0, off));
+}
+function parseMD(md, year) {
+  const [m,d] = md.split("-").map(Number);
+  return new Date(year, m-1, d);
+}
+function iso(d) {
+  const z = n => String(n).padStart(2,"0");
+  return d.getFullYear() + "-" + z(d.getMonth()+1) + "-" + z(d.getDate());
+}
+function parseISO(s) { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); }
+function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+function diffDays(a,b) { return Math.round((parseISO(b)-parseISO(a))/86400000); }
+function fmtRange(a,b) {
+  /* Igual que Magui: el "hasta" es la fecha de entrega (entra la siguiente familia), no la última noche. */
+  const opts = { day:"numeric", month:"short" };
+  const A = parseISO(a), B = parseISO(b);
+  const ya = A.getFullYear(), yb = B.getFullYear();
+  const fa = A.toLocaleDateString("es-MX", opts);
+  const fb = B.toLocaleDateString("es-MX", opts);
+  return fa + " → " + fb + (ya!==yb ? " "+yb : "");
+}
+function monthName(isoS) {
+  return parseISO(isoS).toLocaleDateString("es-MX",{month:"long", year:"numeric"});
+}
+function easter(y) {
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4;
+  const f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+  return new Date(y, month-1, day);
+}
+
+function tagFor(b) {
+  const s = b.start, e = b.end;
+  if (s.slice(5) >= "12-20" || s.slice(5) <= "01-07") return "Navidad";
+  const y = +s.slice(0,4);
+  const eas = easter(s.slice(5) < "06-01" ? y : y);
+  const ss0 = addDays(eas, -8), ss1 = addDays(eas, 7);
+  if (parseISO(s) < ss1 && parseISO(e) > ss0) return "Semana Santa";
+  if (s.slice(5) >= "06-25" && s.slice(5) <= "08-31" && (b.days||0) >= 18) return "Verano";
+  return "";
+}
+
+const WEEKDAYS = ["L","M","X","J","V","S","D"];
+const MODES = [
+  { id:"lista", label:"Lista" },
+  { id:"semana", label:"Semana" },
+  { id:"mes", label:"Mes" },
+  { id:"anio", label:"Año" }
+];
+
+function seasonBounds(season) {
+  const blocks = OFICIAL[season] || [];
+  if (!blocks.length) return { min: null, max: null };
+  let min = blocks[0].start, max = blocks[0].end;
+  for (const b of blocks) { if (b.start < min) min = b.start; if (b.end > max) max = b.end; }
+  return { min, max };
+}
+function seasonOfDate(isoDate) {
+  for (const s of SEASONS) {
+    const { min, max } = seasonBounds(s);
+    if (min && isoDate >= min && isoDate < max) return s;
+  }
+  return ui.season;
+}
+function occupant(prop, isoDate, season) {
+  const blocks = OFICIAL[season] || [];
+  return blocks.find(b => b.prop === prop && isoDate >= b.start && isoDate < b.end) || null;
+}
+function propsToShow() {
+  return ui.prop === "all" ? PROPS : PROPS.filter(p => p.id === ui.prop);
+}
+function famMuted(code) {
+  return ui.fam !== "all" && code && code !== ui.fam;
+}
+function cursorDate() {
+  if (ui.cursor) return parseISO(ui.cursor);
+  const t = iso(new Date());
+  const { min, max } = seasonBounds(ui.season);
+  if (min && t >= min && t < max) ui.cursor = t;
+  else ui.cursor = min || t;
+  return parseISO(ui.cursor);
+}
+function setCursor(d) {
+  ui.cursor = iso(d);
+  const s = seasonOfDate(ui.cursor);
+  if (s) ui.season = s;
+}
+function mondayOf(d) {
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const day = (x.getDay() + 6) % 7;
+  x.setDate(x.getDate() - day);
+  return x;
+}
+function personById(id) { return PEOPLE.find(p => p.id === id); }
+function kidsOf(fam) { return PEOPLE.filter(p => p.fam === fam && p.role === "kid"); }
+function headOf(fam) { return PEOPLE.find(p => p.fam === fam && p.role === "head"); }
+function subKey(season, prop, start) { return `${season}|${prop}|${start}`; }
+function assignedPerson(block) {
+  if (!block) return null;
+  const id = subs[subKey(ui.season || block.season, block.prop, block.start)];
+  if (id) return personById(id);
+  const mode = (splitRules[block.fam] || {}).mode || "none";
+  if (mode === "auto") {
+    const kids = kidsOf(block.fam);
+    if (!kids.length) return null;
+    const famBlocks = (OFICIAL[ui.season] || []).filter(b => b.fam === block.fam && b.prop === block.prop);
+    const idx = Math.max(0, famBlocks.findIndex(b => b.start === block.start && b.prop === block.prop));
+    return kids[idx % kids.length];
+  }
+  return null;
+}
+function displayWho(block) {
+  const p = assignedPerson(block);
+  if (p) return { label: p.short, sub: true, person: p };
+  return { label: block.fam, sub: false, person: headOf(block.fam) };
+}
+
+function stripeHtml(isoDate, season) {
+  return propsToShow().map(p => {
+    const occ = occupant(p.id, isoDate, season);
+    const code = occ ? occ.fam : "";
+    const col = code ? (FAM_META[code]?.color || "#888") : "transparent";
+    const mute = !code || famMuted(code) ? " mute" : "";
+    const famc = code ? ` fam-${code}` : "";
+    const who = occ ? displayWho(occ) : null;
+    const label = who ? (who.sub ? who.label : code) : "";
+    return `<i class="${mute}${famc}" style="background:${code ? col : "#2a241e"}">${label}</i>`;
+  }).join("");
+}
+
+function renderPills() {
+  const sel = $("seasonSelect");
+  if (sel) {
+    sel.innerHTML = SEASONS.map(s => `<option value="${s}" ${ui.season===s?"selected":""}>${s}</option>`).join("");
+    sel.onchange = () => {
+      ui.season = sel.value;
+      const { min } = seasonBounds(ui.season);
+      if (min) ui.cursor = min;
+      renderCal(); renderPills();
+    };
+  }
+  if ($("modeSeg")) {
+    $("modeSeg").innerHTML = MODES.map(m =>
+      `<button class="${ui.mode===m.id?"on":""}" data-m="${m.id}">${m.label}</button>`
+    ).join("");
+    $("modeSeg").onclick = e => {
+      const b = e.target.closest("[data-m]"); if (!b) return;
+      ui.mode = b.dataset.m; renderCal(); renderPills();
+    };
+  }
+  const n = (ui.prop!=="all"?1:0) + (ui.fam!=="all"?1:0);
+  const fc = $("filterCount");
+  if (fc) { fc.textContent = n; fc.classList.toggle("hidden", n===0); }
+  $("legend").innerHTML = rules.order.map(f =>
+    `<span class="chip"><i class="dot" style="background:${FAM_META[f]?.color||"#888"}"></i>${f}</span>`
+  ).join("");
+}
+
+function navBar(title) {
+  return `<div class="cal-bar">
+    <button class="iconbtn" data-nav="-1" aria-label="Anterior">‹</button>
+    <h3 class="serif">${title}</h3>
+    <button class="iconbtn" data-nav="1" aria-label="Siguiente">›</button>
+  </div>
+  <div class="row" style="margin-bottom:10px">
+    <button class="btn small ghost" data-nav="hoy">Hoy</button>
+    <span class="muted">${ui.season} · clon Familión</span>
+  </div>`;
+}
+
+function renderCal() {
+  cursorDate();
+  $("hdrSub").textContent = ui.season + " · clon Familión";
+  if (ui.mode === "semana") return renderWeek();
+  if (ui.mode === "mes") return renderMonth();
+  if (ui.mode === "anio") return renderYear();
+  renderCalList();
+}
+
+function renderCalList() {
+  const blocks = (OFICIAL[ui.season] || []).filter(b =>
+    (ui.prop==="all" || b.prop===ui.prop) && (ui.fam==="all" || b.fam===ui.fam)
+  );
+  const today = iso(new Date());
+  if (!blocks.length) { $("calList").innerHTML = "<p class='muted'>Sin bloques.</p>"; return; }
+
+  const byProp = {};
+  for (const b of blocks) (byProp[b.prop] ||= []).push(b);
+  let html = "";
+  const totals = {};
+  for (const b of blocks) {
+    totals[b.fam] = (totals[b.fam]||0) + (b.days || diffDays(b.start,b.end));
+  }
+  html += `<div class="card"><div class="row">` +
+    Object.entries(totals).sort((a,b)=>b[1]-a[1]).map(([f,d]) =>
+      `<div class="kpi"><b>${d}</b><span>${f}</span></div>`
+    ).join("") + `</div><p class="muted" style="margin:10px 0 0">Días visibles con el filtro actual. En 2026-27 el objetivo es ~60 por familia por depa.</p></div>`;
+
+  for (const p of PROPS) {
+    const list = byProp[p.id]; if (!list) continue;
+    html += `<div class="card"><h2>${p.label}</h2>`;
+    let lastM = "";
+    for (const b of list) {
+      const m = monthName(b.start);
+      if (m !== lastM) { html += `<div class="month-lab">${m}</div>`; lastM = m; }
+      const t = tagFor(b);
+      const isToday = today >= b.start && today < b.end;
+      html += `<div class="block ${isToday?"today-mark":""}" data-open='${JSON.stringify(b)}'>
+        <div class="when">${fmtRange(b.start,b.end)}</div>
+        <div class="who"><i class="dot" style="background:${FAM_META[b.fam]?.color||"#888"}"></i>${b.fam} · ${displayWho(b).sub ? displayWho(b).label : nameOf(b.fam)} ${displayWho(b).sub?`<span class="tag">${displayWho(b).label}</span>`:""} ${t?`<span class="tag">${t}</span>`:""}</div>
+        <div class="days">${b.days ?? diffDays(b.start,b.end)}d${b.n?` · #${b.n}`:""}${isToday?" · hoy":""}</div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+  $("calList").innerHTML = html;
+}
+
+function shiftCursor(dir) {
+  const d = cursorDate();
+  if (dir === "hoy") {
+    setCursor(new Date());
+  } else if (ui.mode === "semana") {
+    d.setDate(d.getDate() + dir * 7);
+    setCursor(d);
+  } else if (ui.mode === "anio") {
+    const idx = SEASONS.indexOf(ui.season);
+    const next = SEASONS[idx + dir];
+    if (next) {
+      ui.season = next;
+      const { min } = seasonBounds(next);
+      if (min) ui.cursor = min;
+    }
+  } else {
+    d.setMonth(d.getMonth() + dir);
+    setCursor(d);
+  }
+  renderCal();
+  renderPills();
+}
+
+function openDay(isoDate) {
+  const season = seasonOfDate(isoDate) || ui.season;
+  const rows = PROPS.map(p => {
+    const occ = occupant(p.id, isoDate, season);
+    if (!occ) return `<div class="swap-item">${p.label}<br><span class="muted">sin asignación</span></div>`;
+    return `<div class="swap-item" data-open='${JSON.stringify(occ)}'>
+      <b>${p.label}</b><br>${occ.fam} · ${nameOf(occ.fam)}
+      <div class="muted">${fmtRange(occ.start, occ.end)} · ${occ.days ?? diffDays(occ.start,occ.end)}d${occ.n?` · #${occ.n}`:""}</div>
+    </div>`;
+  }).join("");
+  const pretty = parseISO(isoDate).toLocaleDateString("es-MX", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+  $("modalBody").innerHTML = `<h2 class="serif">${pretty}</h2><p class="muted">${season}</p>${rows}`;
+  $("modal").classList.remove("hidden");
+}
+
+function renderWeek() {
+  const start = mondayOf(cursorDate());
+  const today = iso(new Date());
+  const end = addDays(start, 6);
+  const title = start.toLocaleDateString("es-MX",{day:"numeric", month:"short"}) + " – " +
+    end.toLocaleDateString("es-MX",{day:"numeric", month:"short", year:"numeric"});
+  let html = navBar(title) + `<p class="hint">Cada fila es un depa. El color es la familia de ese día.</p><div class="card week-wrap"><div class="week-grid">`;
+  html += `<div></div>`;
+  for (let i=0;i<7;i++) {
+    const d = addDays(start, i);
+    const id = iso(d);
+    html += `<div class="wdays" style="display:block;text-align:center"><span>${WEEKDAYS[i]} ${d.getDate()}</span></div>`;
+  }
+  for (const p of propsToShow()) {
+    html += `<div class="lab">${p.label.replace(" San Diego","").replace("Vail ","Vail ")}</div>`;
+    for (let i=0;i<7;i++) {
+      const d = addDays(start, i);
+      const id = iso(d);
+      const season = seasonOfDate(id) || ui.season;
+      const occ = occupant(p.id, id, season);
+      const code = occ ? occ.fam : "—";
+      const col = occ ? FAM_META[occ.fam].color : "transparent";
+      const mute = !occ || famMuted(occ.fam);
+      const who = occ ? displayWho(occ) : null;
+      html += `<div class="wcell ${id===today?"today":""}" data-day="${id}" style="background:${occ && !mute ? col : "#1a1613"};color:${occ && !mute ? "#1c1408" : "var(--muted)"}">
+        <div>${mute && occ ? occ.fam : (who && who.sub ? who.label : code)}</div>
+        <div class="sub">${who && who.sub ? occ.fam : (occ ? nameOf(occ.fam).split(" ")[0] : "")}</div>
+      </div>`;
+    }
+  }
+  html += `</div></div>`;
+  $("calList").innerHTML = html;
+}
+
+function renderMonth() {
+  const cur = cursorDate();
+  const y = cur.getFullYear(), m = cur.getMonth();
+  const first = new Date(y, m, 1);
+  const gridStart = mondayOf(first);
+  const today = iso(new Date());
+  const title = first.toLocaleDateString("es-MX", { month:"long", year:"numeric" });
+  let html = navBar(title) + `<p class="hint">Tres franjas: 203, 809 y Vail (o el depa filtrado). Toca un día.</p>
+    <div class="card"><div class="wdays">${WEEKDAYS.map(w=>`<span>${w}</span>`).join("")}</div>
+    <div class="month-grid">`;
+  for (let i=0;i<42;i++) {
+    const d = addDays(gridStart, i);
+    const id = iso(d);
+    const inMonth = d.getMonth() === m;
+    const season = seasonOfDate(id) || ui.season;
+    html += `<div class="mday ${inMonth?"":"out"} ${id===today?"today":""} ${(ui.fam!=="all"||ui.prop!=="all")?"tall":""}" data-day="${id}">
+      <span class="n">${d.getDate()}</span>
+      <div class="stripes">${stripeHtml(id, season)}</div>
+    </div>`;
+  }
+  html += `</div></div>`;
+  $("calList").innerHTML = html;
+}
+
+function renderYear() {
+  const startYear = +ui.season.slice(0,4);
+  /* Temporada dic–nov, no año civil */
+  const months = [];
+  for (let i=0;i<12;i++) months.push(new Date(startYear, 11 + i, 1));
+  const today = iso(new Date());
+  let html = navBar(`Temporada ${ui.season}`) + `<p class="hint">Año operativo diciembre–noviembre. Cada cuadrito es un día.</p><div class="year-grid">`;
+  months.forEach(first => {
+    const y = first.getFullYear(), m = first.getMonth();
+    const gridStart = mondayOf(first);
+    const lastDay = new Date(y, m+1, 0).getDate();
+    html += `<div class="card mini"><h4>${first.toLocaleDateString("es-MX",{month:"long", year:"numeric"})}</h4>
+      <div class="mini-grid">${WEEKDAYS.map(w=>`<em>${w}</em>`).join("")}`;
+    for (let i=0;i<42;i++) {
+      const d = addDays(gridStart, i);
+      const id = iso(d);
+      const inMonth = d.getMonth() === m;
+      if (!inMonth) { html += `<div class="pix" style="background:transparent"></div>`; continue; }
+      const season = seasonOfDate(id) || ui.season;
+      const shown = propsToShow();
+      const cols = shown.map(p => {
+        const occ = occupant(p.id, id, season);
+        if (!occ || famMuted(occ.fam)) return "#2a241e";
+        return FAM_META[occ.fam].color;
+      });
+      const bg = cols.length === 1 ? cols[0] : `linear-gradient(${cols.join(",")})`;
+      html += `<div class="pix ${id===today?"today":""}" data-day="${id}" style="background:${bg}"></div>`;
+    }
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+  $("calList").innerHTML = html;
+}
+
+function renderPicos() {
+  const sel = $("picoYear");
+  if (!sel.options.length) {
+    Object.keys(PICOS).forEach(y => {
+      const o = document.createElement("option");
+      o.value = y; o.textContent = y + "–" + ( +y+1 );
+      if (y === "2026") o.selected = true;
+      sel.appendChild(o);
+    });
+  }
+  const y = +sel.value;
+  const pico = PICOS[y];
+  const order = yearOrder(y);
+  $("whoIsOne").innerHTML = `Temporada ${y}–${y+1}: el #1 es <b>${order[0]} · ${nameOf(order[0])}</b> (Navidad en Vail). Orden: ${order.map((c,i)=>`#${i+1} ${c}`).join(" · ")}.`;
+  let h = `<div class="peak-grid">
+    <div class="h">Pico</div><div class="h">San Diego</div><div class="h">Vail</div>`;
+  pico.sd.forEach((sd,i) => {
+    h += `<div>${PICO_LABELS[i]}</div>
+      <div class="fam"><i class="dot" style="background:${FAM_META[sd]?.color}"></i> ${sd} · ${nameOf(sd)}</div>
+      <div class="fam"><i class="dot" style="background:${FAM_META[pico.vail[i]]?.color}"></i> ${pico.vail[i]} · ${nameOf(pico.vail[i])}</div>`;
+  });
+  h += `</div>`;
+  $("picoCard").innerHTML = h;
+}
+
+function peakWindows(startYear) {
+  const x0 = parseMD(rules.xmasStart, startYear);
+  const x1 = addDays(x0, rules.xmasDays);
+  const eas = easter(startYear+1);
+  const ss0 = addDays(eas, -8);
+  const ss1 = addDays(eas, 7);
+  const s0 = parseMD(rules.summerStart, startYear+1);
+  const s1 = addDays(s0, rules.summerDays);
+  const s2 = addDays(s1, rules.summerDays);
+  const s3 = addDays(s2, rules.summerDays);
+  const pico = PICOS[startYear] || PICOS[2026];
+  return [
+    { tag:"Navidad", start:x0, end:x1, sd:pico.sd[0], vail:pico.vail[0] },
+    { tag:"Semana Santa", start:ss0, end:ss1, sd:pico.sd[1], vail:pico.vail[1] },
+    { tag:"Verano A", start:s0, end:s1, sd:pico.sd[2], vail:pico.vail[2] },
+    { tag:"Verano B", start:s1, end:s2, sd:pico.sd[3], vail:pico.vail[3] },
+    { tag:"Verano C", start:s2, end:s3, sd:pico.sd[4], vail:pico.vail[4] }
+  ];
+}
+
+function generateSeason(startYear) {
+  const order = yearOrder(startYear);
+  const seasonStart = parseMD(rules.startMD, startYear);
+  const seasonEnd = parseMD(rules.endMD, startYear+1);
+  const peaks = peakWindows(startYear).filter(p => p.end > seasonStart && p.start < seasonEnd);
+  const out = [];
+  for (const prop of ["203","809","753"]) {
+    let cursor = new Date(seasonStart);
+    let idx = rules.offsets[prop] || 0;
+    while (cursor < seasonEnd) {
+      const hit = peaks.find(p => cursor >= p.start && cursor < p.end);
+      if (hit) {
+        const destSD = prop !== "753";
+        const fam = (rules.sdTogether && destSD) ? hit.sd : (destSD ? hit.sd : hit.vail);
+        const useFam = (prop === "753") ? hit.vail : (rules.sdTogether ? hit.sd : order[idx % 6]);
+        const end = hit.end < seasonEnd ? hit.end : seasonEnd;
+        out.push({ prop, start: iso(cursor), end: iso(end), fam: useFam, days: diffDays(iso(cursor), iso(end)), tag: hit.tag, n: order.indexOf(useFam)+1, proposed: true });
+        cursor = new Date(end);
+        continue;
+      }
+      const next = peaks.filter(p => p.start > cursor).sort((a,b)=>a.start-b.start)[0];
+      let end = addDays(cursor, rules.blockDays);
+      if (next && end > next.start) end = new Date(next.start);
+      if (end > seasonEnd) end = new Date(seasonEnd);
+      if (end <= cursor) end = addDays(cursor, 1);
+      const fam = order[idx % 6];
+      out.push({ prop, start: iso(cursor), end: iso(end), fam, days: diffDays(iso(cursor), iso(end)), tag:"", n: (idx%6)+1, proposed: true });
+      idx++;
+      cursor = end;
+    }
+  }
+  return { year: startYear, label: startYear + "-" + (startYear+1), order, blocks: out, peaks };
+}
+
+function fairness(blocks) {
+  const tab = {};
+  for (const f of rules.order) tab[f] = { "203":0,"809":0,"753":0, tot:0 };
+  for (const b of blocks) {
+    if (!tab[b.fam]) tab[b.fam] = { "203":0,"809":0,"753":0, tot:0 };
+    const d = b.days || diffDays(b.start,b.end);
+    tab[b.fam][b.prop] += d;
+    tab[b.fam].tot += d;
+  }
+  return tab;
+}
+
+function renderGen() {
+  const years = [];
+  for (let y=2026; y<=2034; y++) years.push(y);
+  const sel = $("genYear");
+  if (!sel.options.length) {
+    years.forEach(y => {
+      const o=document.createElement("option");
+      o.value=y; o.textContent=y+"–"+(y+1)+(y===2026?" (ya oficial)":"");
+      if (y===2027) o.selected = true;
+      sel.appendChild(o);
+    });
+  }
+  renderSwaps();
+  if (!ui.gen) {
+    $("genMeta").innerHTML = `<p class="muted">Aún no hay propuesta. Elige año y genera.</p>`;
+    $("fairTable").innerHTML = "";
+    $("genList").innerHTML = "";
+    return;
+  }
+  const g = ui.gen;
+  $("genMeta").innerHTML = `<div class="banner">Propuesta ${g.label} · #1 ${g.order[0]} (${nameOf(g.order[0])}) · orden ${g.order.join(" → ")}</div>
+    <div class="card"><p class="muted">Picos usados</p>${g.peaks.map(p=>`<div class="swap-item">${p.tag}: ${iso(p.start)} → ${iso(p.end)} · SD ${p.sd} · Vail ${p.vail}</div>`).join("")}</div>`;
+  const fair = fairness(g.blocks);
+  let t = `<table class="fair"><tr><th>Fam</th><th class="num">203</th><th class="num">809</th><th class="num">Vail</th><th class="num">Total</th></tr>`;
+  for (const f of g.order) {
+    const r = fair[f];
+    t += `<tr><td>${f}</td><td class="num">${r["203"]}</td><td class="num">${r["809"]}</td><td class="num">${r["753"]}</td><td class="num"><b>${r.tot}</b></td></tr>`;
+  }
+  t += `</table><p class="muted">Objetivo informal: ~60 días por depa, ~180 en total.</p>`;
+  $("fairTable").innerHTML = t;
+
+  $("genPropPills").innerHTML = `<button class="pill ${ui.genProp==="all"?"on":""}" data-gp="all">Los 3</button>` +
+    PROPS.map(p=>`<button class="pill ${ui.genProp===p.id?"on":""}" data-gp="${p.id}">${p.label}</button>`).join("");
+  $("genPropPills").onclick = e => { const b=e.target.closest("[data-gp]"); if(!b)return; ui.genProp=b.dataset.gp; renderGen(); };
+
+  const blocks = g.blocks.filter(b => ui.genProp==="all" || b.prop===ui.genProp);
+  const byProp = {};
+  for (const b of blocks) (byProp[b.prop] ||= []).push(b);
+  let html = "";
+  for (const p of PROPS) {
+    const list = byProp[p.id]; if (!list) continue;
+    html += `<div class="card"><h2>${p.label}</h2>`;
+    let lastM="";
+    for (const b of list) {
+      const m = monthName(b.start);
+      if (m!==lastM) { html += `<div class="month-lab">${m}</div>`; lastM=m; }
+      html += `<div class="block">
+        <div class="when">${fmtRange(b.start,b.end)}</div>
+        <div class="who"><i class="dot" style="background:${FAM_META[b.fam]?.color||"#888"}"></i>${b.fam} · ${nameOf(b.fam)} ${b.tag?`<span class="tag">${b.tag}</span>`:""}</div>
+        <div class="days">${b.days}d</div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+  $("genList").innerHTML = html;
+}
+
+function renderSwaps() {
+  const list = JSON.parse(storageGet("familion_swaps")||"[]");
+  $("swapList").innerHTML = list.length ? list.map((s,i)=>
+    `<div class="swap-item">${s.text} <span class="muted">· ${s.at}</span>
+     <button class="btn small ghost" data-del="${i}">Quitar</button></div>`
+  ).join("") : `<p class="muted">Sin notas todavía.</p>`;
+  $("swapList").onclick = e => {
+    const b = e.target.closest("[data-del]"); if(!b)return;
+    list.splice(+b.dataset.del,1);
+    storageSet("familion_swaps", JSON.stringify(list));
+    renderSwaps();
+  };
+}
+
+function copyProposal() {
+  if (!ui.gen) return alert("Genera una propuesta primero.");
+  const g = ui.gen;
+  const fair = fairness(g.blocks);
+  let txt = `PROPUESTA FAMILIÓN ${g.label}\n#1 ${g.order[0]} ${nameOf(g.order[0])}\nOrden: ${g.order.join(" → ")}\n\nPicos:\n`;
+  g.peaks.forEach(p => txt += `· ${p.tag} ${iso(p.start)}–${iso(p.end)}  SD=${p.sd}  Vail=${p.vail}\n`);
+  txt += `\nDías:\n`;
+  g.order.forEach(f => { const r=fair[f]; txt += `${f}  203=${r["203"]}  809=${r["809"]}  Vail=${r["753"]}  tot=${r.tot}\n`; });
+  txt += `\nBloques:\n`;
+  for (const p of PROPS) {
+    txt += `\n${p.label}\n`;
+    g.blocks.filter(b=>b.prop===p.id).forEach(b => {
+      txt += `${b.start} → ${b.end}  ${b.fam}  ${b.days}d  ${b.tag||""}\n`;
+    });
+  }
+  txt += `\n— Generado en Familión MVP. No sustituye el calendario oficial de Magui.`;
+  navigator.clipboard.writeText(txt).then(()=>alert("Resumen copiado.")).catch(()=>{
+    prompt("Copia el texto:", txt);
+  });
+}
+
+function renderAll() {
+  renderPills();
+  renderCal();
+  renderPicos();
+}
+
+document.querySelector(".nav").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-v]"); if (!btn) return;
+  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b===btn));
+  const v = btn.dataset.v;
+  $("view-cal").classList.toggle("hidden", v!=="cal");
+  $("view-picos").classList.toggle("hidden", v!=="picos");
+  $("view-casa").classList.toggle("hidden", v!=="casa");
+  $("view-reglas").classList.toggle("hidden", v!=="reglas");
+  $("view-prop").classList.toggle("hidden", v!=="prop");
+  if (v==="reglas") fillRuleForm();
+  if (v==="prop") renderGen();
+  if (v==="picos") renderPicos();
+  if (v==="casa") renderCasa();
+});
+$("picoYear").addEventListener("change", renderPicos);
+$("btnSaveRules").addEventListener("click", saveRules);
+$("btnResetRules").addEventListener("click", () => {
+  rules = structuredClone(DEFAULT_RULES);
+  storageDel("familion_rules");
+  fillRuleForm();
+  $("rulesStatus").textContent = "Reglas restauradas.";
+  renderAll();
+});
+$("btnGen").addEventListener("click", () => {
+  saveRules();
+  ui.gen = generateSeason(+$("genYear").value);
+  renderGen();
+});
+$("btnCopy").addEventListener("click", copyProposal);
+$("btnSwap").addEventListener("click", () => {
+  const text = $("swapText").value.trim(); if (!text) return;
+  const list = JSON.parse(storageGet("familion_swaps")||"[]");
+  list.unshift({ text, at: new Date().toLocaleString("es-MX") });
+  storageSet("familion_swaps", JSON.stringify(list));
+  $("swapText").value = "";
+  renderSwaps();
+});
+$("calList").addEventListener("click", e => {
+  const nav = e.target.closest("[data-nav]");
+  if (nav) {
+    const v = nav.dataset.nav;
+    shiftCursor(v === "hoy" ? "hoy" : +v);
+    return;
+  }
+  const day = e.target.closest("[data-day]");
+  if (day) { openDay(day.dataset.day); return; }
+  const row = e.target.closest("[data-open]"); if (!row) return;
+  const b = JSON.parse(row.dataset.open);
+  const who = displayWho(b);
+  const kids = kidsOf(b.fam);
+  const curSub = subs[subKey(ui.season, b.prop, b.start)] || "";
+  $("modalBody").innerHTML = `<h2 class="serif">${b.fam} · ${nameOf(b.fam)}</h2>
+    <p>${PROPS.find(p=>p.id===b.prop).label}<br>${fmtRange(b.start,b.end)} · ${b.days||diffDays(b.start,b.end)} días${b.n?` · turno #${b.n}`:""}</p>
+    <p class="muted">${who.sub ? "Subdividido a " + who.label : "Sin subdividir — se ve el hermano"}</p>
+    ${canEditFam(b.fam) ? `<label class="field">Asignar a</label>
+      <select id="editKid">
+        <option value="">Hermano (${headOf(b.fam)?.short || b.fam})</option>
+        ${kids.map(k=>`<option value="${k.id}" ${k.id===curSub?"selected":""}>${k.short}</option>`).join("")}
+      </select>
+      <button class="btn" id="btnSaveKid">Guardar asignación</button>` : ""}
+    <label class="field">Cambiar familia en el clon</label>
+    <select id="editFam">${rules.order.map(f=>`<option value="${f}" ${f===b.fam?"selected":""}>${f} · ${nameOf(f)}</option>`).join("")}</select>
+    <button class="btn ghost" id="btnSaveBlock">Guardar familia</button>
+    <p class="muted">La familia vive en el clon. La subasignación es de cada casa.</p>`;
+  if ($("btnSaveKid")) $("btnSaveKid").onclick = () => {
+    const id = $("editKid").value;
+    const k = subKey(ui.season, b.prop, b.start);
+    if (id) subs[k] = id; else delete subs[k];
+    splitRules[b.fam] = { mode: "manual" };
+    saveSplit();
+    closeModal();
+    renderCal();
+  };
+  $("btnSaveBlock").onclick = () => {
+    saveBlockFamily(b, $("editFam").value).then(closeModal).catch(err => alert(err.message));
+  };
+  $("modal").classList.remove("hidden");
+});
+function closeModal(){ $("modal").classList.add("hidden"); }
+$("modal").addEventListener("click", e => { if (e.target.id==="modal") closeModal(); });
+
+const EMBEDDED_OFICIAL = OFICIAL;
+const EMBEDDED_PICOS = PICOS;
+let unsubLive = null;
+
+const DEFAULT_FB = {
+  apiKey: "AIzaSyCiu3fmnaAh984_1SEAsTd7d-LpBkox7yI",
+  authDomain: "familion-25fb1.firebaseapp.com",
+  projectId: "familion-25fb1",
+  storageBucket: "familion-25fb1.firebasestorage.app",
+  messagingSenderId: "333914035434",
+  appId: "1:333914035434:web:568a0075d4b8020d777393"
+};
+
+function loadFb() {
+  try {
+    const saved = JSON.parse(storageGet("familion_fb") || "{}");
+    return { ...DEFAULT_FB, ...saved };
+  } catch { return { ...DEFAULT_FB }; }
+}
+const APP_VERSION = "0.4 Casa";
+function setLiveChip(mode, text) {
+  const el = $("liveChip");
+  if (!el) return;
+  el.className = "livechip " + mode;
+  el.textContent = APP_VERSION + " · " + text;
+}
+function applyOfficialPayload(data) {
+  if (!data) return false;
+  let oficial = data.oficial;
+  let picos = data.picos;
+  if (typeof oficial === "string") {
+    try { oficial = JSON.parse(oficial); } catch (e) { oficial = null; }
+  }
+  if (typeof picos === "string") {
+    try { picos = JSON.parse(picos); } catch (e) { picos = null; }
+  }
+  if (oficial && typeof oficial === "object") {
+    OFICIAL = oficial;
+    SEASONS = Object.keys(OFICIAL);
+  }
+  if (picos && typeof picos === "object") PICOS = picos;
+  return !!(oficial && typeof oficial === "object");
+}
+function dbRef() {
+  if (typeof firebase === "undefined") return null;
+  if (!firebase.apps.length) firebase.initializeApp(DEFAULT_FB);
+  return firebase.firestore();
+}
+function pushClon() {
+  const db = dbRef();
+  if (!db) return Promise.reject(new Error("sin Firebase"));
+  return db.collection("calendario").doc("oficial").set({
+    oficial: JSON.stringify(OFICIAL),
+    picos: JSON.stringify(PICOS),
+    updatedAt: new Date().toISOString(),
+    source: "clon Familión"
+  }, { merge: true });
+}
+function pushReglas() {
+  const db = dbRef();
+  if (!db || !firebase.auth().currentUser) return Promise.reject(new Error("entra con el usuario sync"));
+  return db.collection("calendario").doc("reglas").set({
+    rules: JSON.stringify(rules),
+    updatedAt: new Date().toISOString()
+  }, { merge: true });
+}
+function listenClon() {
+  const db = dbRef();
+  if (!db) return;
+  if (unsubLive) unsubLive();
+  const u1 = db.collection("calendario").doc("oficial").onSnapshot(snap => {
+    if (!snap.exists) {
+      setLiveChip("wait", "clon vacío");
+      return;
+    }
+    applyOfficialPayload(snap.data());
+    const when = snap.data().updatedAt ? new Date(snap.data().updatedAt).toLocaleString("es-MX") : "";
+    setLiveChip("on", "clon · " + when);
+    if ($("fbStatus")) $("fbStatus").textContent = "Clon en Firestore. La hoja de Magui ya no se usa.";
+    renderAll();
+  }, err => {
+    setLiveChip("off", "error");
+    if ($("fbStatus")) $("fbStatus").textContent = err.message;
+  });
+  const u2 = db.collection("calendario").doc("reglas").onSnapshot(snap => {
+    if (!snap.exists) return;
+    let r = snap.data().rules;
+    if (typeof r === "string") { try { r = JSON.parse(r); } catch { r = null; } }
+    if (r && typeof r === "object") {
+      rules = { ...structuredClone(DEFAULT_RULES), ...r };
+      storageSet("familion_rules", JSON.stringify(rules));
+      fillRuleForm();
+      renderAll();
+    }
+  });
+  const u3 = db.collection("calendario").doc("subs").onSnapshot(snap => {
+    if (!snap.exists) return;
+    const d = snap.data();
+    if (d.splitRules) splitRules = d.splitRules;
+    if (d.subs) subs = d.subs;
+    storageSet("familion_split", JSON.stringify(splitRules));
+    storageSet("familion_subs", JSON.stringify(subs));
+    renderCal();
+    if ($("view-casa") && !$("view-casa").classList.contains("hidden")) renderCasa();
+  });
+  unsubLive = () => { u1(); u2(); u3(); };
+}
+async function connectFirestore() {
+  if (typeof firebase === "undefined") {
+    setLiveChip("off", "sin SDK");
+    return;
+  }
+  const db = dbRef();
+  const email = ($("fbEmail") && $("fbEmail").value.trim()) || JSON.parse(storageGet("familion_cred")||"{}").email || "";
+  const pass = $("fbPass") && $("fbPass").value;
+  setLiveChip("wait", "conectando…");
+  try {
+    if (email && pass) {
+      storageSet("familion_cred", JSON.stringify({ email }));
+      await firebase.auth().signInWithEmailAndPassword(email, pass);
+    }
+    const user = firebase.auth().currentUser;
+    const doc = await db.collection("calendario").doc("oficial").get();
+    if (!doc.exists) {
+      if (!user) {
+        setLiveChip("wait", "sin clon");
+        if ($("fbStatus")) $("fbStatus").textContent = "Entra con el usuario sync para crear el clon la primera vez.";
+        listenClon();
+        return;
+      }
+      await pushClon();
+      if ($("fbStatus")) $("fbStatus").textContent = "Clon creado con el calendario que ya teníamos.";
+    }
+    listenClon();
+  } catch (err) {
+    setLiveChip("off", "error");
+    if ($("fbStatus")) $("fbStatus").textContent = String(err.message || err);
+  }
+}
+async function saveBlockFamily(block, fam) {
+  const list = OFICIAL[ui.season] || [];
+  const i = list.findIndex(b => b.prop===block.prop && b.start===block.start && b.end===block.end);
+  if (i < 0) return;
+  list[i] = { ...list[i], fam, n: rules.order.indexOf(fam)+1 };
+  OFICIAL[ui.season] = list;
+  await pushClon();
+  renderCal();
+}
+
+if ($("btnSaveFb")) $("btnSaveFb").addEventListener("click", connectFirestore);
+
+function canEditFam(fam) {
+  if (!me) return false;
+  return me.fam === fam && me.role === "head";
+}
+function saveSplit() {
+  storageSet("familion_split", JSON.stringify(splitRules));
+  storageSet("familion_subs", JSON.stringify(subs));
+  const db = dbRef();
+  if (db && firebase.auth().currentUser) {
+    db.collection("calendario").doc("subs").set({
+      splitRules, subs, updatedAt: new Date().toISOString()
+    }, { merge: true }).catch(()=>{});
+  }
+}
+function renderCasa() {
+  const line = $("meLine");
+  if (line) {
+    line.textContent = me
+      ? `Eres ${me.name} · ${me.fam} · ${me.role === "head" ? "jefe de familia" : "hijo"}`
+      : "Todavía no eliges quién eres.";
+  }
+  const av = $("avatar");
+  const lg = $("btnLogin");
+  if (me && av) {
+    av.textContent = me.short.slice(0,2).toUpperCase();
+    av.classList.remove("hidden");
+    if (lg) lg.classList.add("hidden");
+  } else if (av) {
+    av.classList.add("hidden");
+    if (lg) lg.classList.remove("hidden");
+  }
+  $("casaList").innerHTML = `<div class="card">
+      <h2>22 personas</h2>
+      <p class="muted">No hay cuentas de Google todavía. Toca un nombre para usar la app como esa persona en este teléfono.</p>
+      <div class="row">` +
+    PEOPLE.map(p => `<button class="pill ${me&&me.id===p.id?"on":""}" data-me="${p.id}">${p.short} · ${p.fam}</button>`).join("") +
+    `</div></div>` +
+    rules.order.map(fam => {
+    const head = headOf(fam);
+    const kids = kidsOf(fam);
+    const mode = (splitRules[fam] || {}).mode || "none";
+    const note = HEAD_NOTE[fam] ? `<p class="muted">${HEAD_NOTE[fam]}</p>` : "";
+    const edit = canEditFam(fam);
+    return `<div class="card">
+      <h2><i class="dot" style="background:${FAM_META[fam].color}"></i> ${fam} · ${nameOf(fam)}</h2>
+      <p class="muted">Jefe: ${head ? head.name : "—"}</p>
+      ${note}
+      <p class="muted">Hijos: ${kids.map(k=>k.short).join(", ") || "—"}</p>
+      ${edit ? `<label class="field">Reparto de semanas</label>
+        <select data-split="${fam}">
+          <option value="none" ${mode==="none"?"selected":""}>Sin subdividir (se ve el hermano)</option>
+          <option value="auto" ${mode==="auto"?"selected":""}>Automático — rota entre hijos</option>
+          <option value="manual" ${mode==="manual"?"selected":""}>Manual — el jefe asigna cada bloque</option>
+        </select>` : `<p class="muted">Modo: ${mode==="none"?"sin subdividir":mode}</p>`}
+    </div>`;
+  }).join("");
+  $("casaList").onchange = e => {
+    const s = e.target.closest("[data-split]"); if (!s) return;
+    splitRules[s.dataset.split] = { mode: s.value };
+    saveSplit();
+    renderCal();
+  };
+  $("casaList").onclick = e => {
+    const b = e.target.closest("[data-me]"); if (!b) return;
+    me = personById(b.dataset.me);
+    storageSet("familion_me", JSON.stringify(me));
+    renderCasa();
+    renderCal();
+  };
+}
+function openWhoPicker() {
+  $("modalBody").innerHTML = `<h2 class="serif">¿Quién eres?</h2>
+    <p class="muted">Queda en este teléfono. No hace falta Google.</p>` +
+    PEOPLE.map(p => `<button class="btn ghost" data-me="${p.id}" style="margin-top:6px">${p.short} · ${p.fam} · ${p.role==="head"?"jefe":"hijo"}</button>`).join("");
+  $("modal").classList.remove("hidden");
+  $("modalBody").onclick = e => {
+    const b = e.target.closest("[data-me]"); if (!b) return;
+    me = personById(b.dataset.me);
+    storageSet("familion_me", JSON.stringify(me));
+    try {
+      const u = firebase.apps.length && firebase.auth().currentUser;
+      if (u) {
+        dbRef().collection("miembros").doc(u.uid).set({
+          personId: me.id, email: u.email, name: me.name, fam: me.fam, role: me.role
+        }, { merge: true }).catch(()=>{});
+      }
+    } catch (e) {}
+    closeModal();
+    renderCasa();
+    renderCal();
+  };
+}
+function openFilter() {
+  $("modalBody").innerHTML = `<h2 class="serif">Filtro</h2>
+    <label class="field">Depa</label>
+    <div class="row">${[["all","Los 3"],...PROPS.map(p=>[p.id,p.label])].map(([id,lab]) =>
+      `<button class="pill ${ui.prop===id?"on":""}" data-p="${id}">${lab}</button>`).join("")}</div>
+    <label class="field">Familia</label>
+    <div class="row"><button class="pill ${ui.fam==="all"?"on":""}" data-f="all">Todas</button>${
+      rules.order.map(f=>`<button class="pill ${ui.fam===f?"on":""}" data-f="${f}">${f}</button>`).join("")
+    }</div>`;
+  $("modal").classList.remove("hidden");
+  $("modalBody").onclick = e => {
+    const p = e.target.closest("[data-p]");
+    const f = e.target.closest("[data-f]");
+    if (p) ui.prop = p.dataset.p;
+    if (f) ui.fam = f.dataset.f;
+    if (p || f) { renderCal(); renderPills(); openFilter(); }
+  };
+}
+async function afterGoogleUser(u) {
+  if (!u) return;
+  try {
+    const snap = await dbRef().collection("miembros").doc(u.uid).get();
+    if (snap.exists && snap.data().personId) {
+      const p = personById(snap.data().personId);
+      if (p) { me = p; storageSet("familion_me", JSON.stringify(me)); }
+      renderCasa();
+    }
+  } catch (e) {}
+}
+
+if ($("btnFilter")) $("btnFilter").onclick = openFilter;
+if ($("btnLogin")) $("btnLogin").onclick = openWhoPicker;
+if ($("btnWho")) $("btnWho").onclick = openWhoPicker;
+if ($("btnLogout")) $("btnLogout").onclick = async () => {
+  me = null; storageDel("familion_me");
+  try { await firebase.auth().signOut(); } catch {}
+  renderCasa();
+};
+
+try { fillRuleForm(); } catch (e) { console.warn(e); }
+try { renderAll(); } catch (e) { console.warn(e); }
+try { renderCasa(); } catch (e) { console.warn(e); }
+if (location.protocol !== "file:") {
+  try {
+    dbRef();
+    firebase.auth().getRedirectResult().then(res => {
+      if (res && res.user) afterGoogleUser(res.user);
+    }).catch(()=>{});
+    firebase.auth().onAuthStateChanged(u => {
+      if (u && !me) afterGoogleUser(u);
+    });
+  } catch (e) {}
+  connectFirestore();
+} else {
+  setLiveChip("wait", "archivo local · sin Firebase");
+}
+</script>
+</body>
+</html>
